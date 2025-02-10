@@ -25,31 +25,35 @@ A dynamic kiosk display system that keeps your patrons entertained and informed 
 
 ## 📁 Directory Structure
 
+```
 ├── content/
-│ └── 4x3/ # Add your slideshow images here
-├── images/ # Logo images
+│   └── 4x3/          # Add your slideshow images here
+├── images/           # Logo images
 ├── scripts/
-│ ├── slideshow.js # Handles image transitions
-│ └── ticker.js # Manages news ticker
+│   ├── slideshow.js  # Handles image transitions
+│   └── ticker.js     # Manages news ticker
 ├── style/
-│ ├── slideshow.css
-│ └── ticker.css
-└── index.php # Main display file
+│   ├── slideshow.css
+│   └── ticker.css
+└── index.php         # Main display file
+```
 
 ## ⚙️ Customization
 
 ### Slideshow Timing
 
-javascript
+```javascript
 // in scripts/slideshow.js
 const slideSpeed = 10000; // Adjust slide duration (in milliseconds)
+```
 
 ### News Ticker Speed
 
-javascript
+```javascript
 // in scripts/ticker.js
 const scrollSpeed = 15000; // Adjust scroll speed (in milliseconds)
 const showSpeed = 250;     // Adjust transition speed
+```
 
 ## 📝 Requirements
 
