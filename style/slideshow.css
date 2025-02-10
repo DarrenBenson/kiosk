@@ -1,0 +1,89 @@
+:root {
+    --text-color: #f2f2f2; /* Text color for captions */
+    --border-color: white; /* Border color for logos */
+    --slideshow-width: 1024px; /* Width of the slideshow */
+    --titlelogo-width: 335px; /* Width of the title logo */
+    --titlelogo-height: 120px; /* Height of the title logo */
+    --logo-width: 80px; /* Width of the logo */
+    --logo-height: 80px; /* Height of the logo */
+}
+
+/* Global styles */
+* {
+    box-sizing: border-box; /* Ensure padding and border are included in element's total width and height */
+}
+
+body {
+    overflow: hidden; /* Hide scrollbars */
+    width: var(--slideshow-width); /* Set body width to slideshow width */
+    margin: 0; /* Remove default margin */
+}
+
+/* Hide slides by default */
+.mySlides {
+    display: none; 
+}
+
+/* Slideshow container */
+.slideshow-container {
+    position: relative; /* Position relative for absolute positioning of children */
+    margin: auto; /* Center the slideshow container */
+    display: flex; /* Use flexbox for layout */
+    justify-content: center; /* Center content horizontally */
+    align-items: center; /* Center content vertically */
+}
+
+/* Caption text and Number text */
+.text, .numbertext {
+    color: var(--text-color); /* Set text color */
+    padding: 8px 12px; /* Padding for text */
+    position: absolute; /* Position absolutely within the slideshow container */
+}
+
+.text {
+    font-size: 1rem; /* Font size for caption text */
+    bottom: 8px; /* Position from the bottom */
+    width: 100%; /* Full width */
+    text-align: center; /* Center text */
+}
+
+.numbertext {
+    font-size: 0.75rem; /* Font size for number text */
+    top: 0; /* Position from the top */
+    right: 16px; /* Position from the right */
+}
+
+/* Fading animation */
+.fade {
+    animation: fade 1.5s; /* Apply fade animation */
+}
+
+@keyframes fade {
+    from {opacity: .4} /* Start with 40% opacity */
+    to {opacity: 1} /* End with full opacity */
+}
+
+/* On smaller screens, decrease text size */
+@media only screen and (max-width: 300px) {
+    .text {font-size: 0.6875rem;} /* Reduce font size for smaller screens */
+}
+
+/* Title logo styles */
+.titlelogo {
+    position: fixed; /* Fixed position for the title logo */
+    bottom: 16px; /* Position from the bottom */
+    left: 16px; /* Position from the left */
+    width: var(--titlelogo-width); /* Set width from variable */
+    height: var(--titlelogo-height); /* Set height from variable */
+    z-index: 2; /* Ensure it appears above other elements */
+    border: 1px solid var(--border-color); /* Border around the title logo */
+}
+
+/* Logo styles */
+.logo {
+    position: fixed; /* Fixed position for the logo */
+    bottom: 16px; /* Position from the bottom */
+    right: 16px; /* Position from the right */
+    width: var(--logo-width); /* Set width from variable */
+    height: var(--logo-height); /* Set height from variable */
+}

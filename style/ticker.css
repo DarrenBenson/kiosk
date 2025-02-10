@@ -1,0 +1,114 @@
+:root {
+	--ticker-height: 60px; /* Height of the ticker container */
+	--caption-height: 50%; /* Height of the ticker caption */
+	--caption-bg-color: #EC0B43; /* Background color for ticker caption */
+	--text-color: white; /* Text color */
+	--font-size: 1.1em; /* Base font size */
+	--caption-font-size: 0.8em; /* Font size for caption text */
+	--padding: 5px; /* Padding for list items */
+}
+
+/* Global styles */
+* {
+	margin: 0; /* Remove default margin */
+	padding: 0; /* Remove default padding */
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; /* Set font family */
+}
+
+.ticker-container {
+	height: var(--ticker-height); /* Set height from variable */
+	width: 100%; /* Full width */
+	text-align: center; /* Center text */
+	position: relative; /* Position relative for absolute positioning of children */
+	overflow: hidden; /* Hide overflow */
+	background-color: rgba(0, 0, 0, 1); /* Background color */
+	color: var(--text-color); /* Set text color */
+	font-size: var(--font-size); /* Set base font size */
+	border-bottom: 1px solid var(--text-color); /* Bottom border */
+	border-top: 1px solid var(--text-color); /* Top border */
+}
+
+/* Ticker caption styles */
+.ticker-caption {
+	height: var(--caption-height); /* Set height from variable */
+	width: 100%; /* Full width */
+	background-color: var(--caption-bg-color); /* Background color for caption */
+	display: table; /* Use table display for vertical centering */
+	position: absolute; /* Position absolutely within the container */
+	color: var(--text-color); /* Set text color */
+	font-size: var(--caption-font-size); /* Set font size for caption */
+	z-index: 1; /* Ensure it appears above other elements */
+}
+
+.ticker-caption p {
+	height: inherit; /* Inherit height */
+	width: inherit; /* Inherit width */
+	display: table-cell; /* Use table-cell for vertical alignment */
+	vertical-align: middle; /* Center vertically */
+	font-weight: bold; /* Bold text */
+}
+
+/* Ticker list styles */
+.ticker-container ul {
+	list-style: none; /* Remove list style */
+	padding: 0; /* Remove padding */
+	height: auto; /* Auto height */
+	margin-left: 170px; /* Margin for positioning */
+}
+
+.ticker-container ul div {
+	overflow: hidden; /* Hide overflow */
+	position: absolute; /* Position absolutely */
+	z-index: 0; /* Set z-index */
+	display: inline; /* Inline display */
+	min-width: 100%; /* Minimum width */
+	left: 0; /* Position from the left */
+	transition: 0.25s ease-in-out; /* Transition for smooth movement */
+}
+
+.ticker-container ul div.ticker-active {
+	top: 0; /* Position active ticker at the top */
+}
+
+.ticker-container ul div.not-active {
+	top: 30px; /* Position not-active ticker */
+}
+
+.ticker-container ul div.remove {
+	top: -30px; /* Position removed ticker */
+}
+
+.ticker-container ul div li {
+	padding: var(--padding); /* Set padding from variable */
+}
+
+.ticker-container ul div li a {
+	color: var(--caption-bg-color); /* Set link color */
+}
+
+/* Adjustments for smaller ticker */
+.ticker-container {
+	height: 30px; /* Reduced height for smaller ticker */
+	text-align: left; /* Align text to the left */
+}
+
+.ticker-container .ticker-caption {
+	height: 100%; /* Full height for caption */
+	width: 150px; /* Fixed width for caption */
+	background: url('../images/ticker-caption-bg.png'); /* Background image for caption */
+}
+
+.ticker-container .ticker-caption p {
+	text-align: left; /* Align text to the left */
+	padding-left: 7px; /* Padding for left alignment */
+}
+
+.ticker-container ul {
+	margin-left: 170px; /* Margin for positioning */
+	height: 100%; /* Full height */
+}
+
+.ticker-container ul div {
+	height: 100%; /* Full height for ticker items */
+	left: 170px; /* Position from the left */
+}
