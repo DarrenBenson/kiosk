@@ -28,12 +28,6 @@ function showSlides() {
     // Move to next slide, wrapping around to start if at end
     slideIndex = (slideIndex + 1) % slides.length;
     
-    // Debug check: Verify valid slide index
-    if (slideIndex < 0 || slideIndex >= slides.length) {
-        console.error(`Invalid slide index: ${slideIndex}`);
-        slideIndex = 0;
-    }
-    
     slides[slideIndex].style.display = "block";  
 
     // Schedule next slide transition

@@ -1,23 +1,16 @@
 // Configuration constants - adjust these values to fix timing issues
 const showSpeed = 250;    // Time in ms to show new content (0.25 seconds)
-const scrollSpeed = 15000; // Delay between transitions (15 seconds)
-const slideSpeed = 10000; // ten second delay between slide transitions
-let slideIndex = 0;
+const scrollSpeed = 25000; // Delay between transitions (15 seconds)
 
 /**
  * NewsTicker Class
  * Manages a scrolling news ticker that displays items one at a time
  * and scrolls them horizontally across the screen
  * 
- * Debug tips:
- * - Check CSS classes: ticker-container, ticker-active, not-active
- * - Verify DOM structure: ul > div > li > span
- * - Monitor transition timing with showSpeed and scrollSpeed
  */
 class NewsTicker {
 	/**
 	 * Initialize the news ticker
-	 * Debug: Check if tickerItems are found in constructor
 	 */
 	constructor() {
 		this.tickerItems = document.querySelectorAll('.ticker-container ul div');
@@ -34,7 +27,6 @@ class NewsTicker {
 
 	/**
 	 * Set up initial state and start the ticker
-	 * Debug: Verify initial active/inactive states are set correctly
 	 */
 	init() {
 		// Set initial active/inactive states for ticker items
@@ -53,7 +45,6 @@ class NewsTicker {
 
 	/**
 	 * Switch to the next news item in the ticker
-	 * Debug: Monitor class changes and transitions
 	 */
 	setActiveContent() {
 		const activeItem = document.querySelector('.ticker-container ul div.ticker-active');
@@ -112,7 +103,6 @@ class NewsTicker {
 
 	/**
 	 * Calculate the width of text for scrolling
-	 * Debug: Monitor text width calculations
 	 * @param {string} text - The text to measure
 	 * @returns {number} Width of the text in pixels
 	 */
@@ -134,7 +124,6 @@ class NewsTicker {
 
 	/**
 	 * Animate the scrolling of the active content
-	 * Debug: Monitor animation timing and content width
 	 */
 	scrollActiveContent() {
 		setTimeout(() => {
@@ -166,7 +155,6 @@ class NewsTicker {
 
 	/**
 	 * Start the ticker's main loop
-	 * Debug: Monitor interval timing and transitions
 	 */
 	startTicker() {
 		console.log('Starting ticker with intervals:', {

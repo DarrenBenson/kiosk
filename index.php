@@ -2,13 +2,26 @@
 // Load news items from BBC RSS feed
 function getNewsItems() {
     $items = []; // Initialize an array to hold news items
-    $xml = @simplexml_load_file("http://feeds.bbci.co.uk/news/uk/rss.xml"); // Load the RSS feed
+    $xml = @simplexml_load_file("https://feeds.bbci.co.uk/news/uk/rss.xml"); // Load the RSS feed
     
-
     // Check if the RSS feed was loaded successfully
     if ($xml === false) {
         error_log("Failed to load BBC RSS feed"); // Log an error if loading fails
-        return $items; // Return an empty array
+        // Provide fallback news items
+        return [
+            [
+                'title' => 'Welcome to Game Over Bar',
+                'description' => 'Check back later for the latest news and updates.',
+                'link' => '#',
+                'pubDate' => date('D, d M Y H:i:s O')
+            ],
+            [
+                'title' => 'Technical Difficulties',
+                'description' => 'We are currently unable to load the latest news. Please try again later.',
+                'link' => '#',
+                'pubDate' => date('D, d M Y H:i:s O')
+            ]
+        ];
     }
     
     // Iterate through each item in the RSS feed
@@ -82,7 +95,7 @@ $slideshowImages = getSlideshowImages(); // Call function to get slideshow image
         <?php foreach ($slideshowImages as $image): ?> <!-- Loop through slideshow images -->
             <div class="mySlides fade">
                 <div class="numbertext"><?= $image['number'] ?> / <?= $image['total'] ?></div> <!-- Display image number -->
-                <img src="<?= $image['path'] ?>" style="width:1024" alt="Slideshow Image"> <!-- Slideshow image -->
+                <img src="<?= $image['path'] ?>" style="width:1024px" alt="Slideshow Image"> <!-- Slideshow image -->
             </div>
         <?php endforeach; ?>
         
