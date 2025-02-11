@@ -36,6 +36,5 @@ function showSlides() {
 
 // Initialize slideshow when DOM is fully loaded
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('Initializing slideshow...');
     showSlides();
 });

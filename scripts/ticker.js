@@ -21,7 +21,6 @@ class NewsTicker {
 			return;
 		}
 		
-		console.log(`Found ${this.tickerItems.length} ticker items`);
 		this.init();
 	}
 
@@ -33,7 +32,6 @@ class NewsTicker {
 		this.tickerItems.forEach((item, i) => {
 			if (i === 0) {
 				item.classList.add('ticker-active');
-				console.log('Set initial active item');
 			} else {
 				item.classList.add('not-active');
 			}
@@ -143,7 +141,6 @@ class NewsTicker {
 
 			// Calculate total width needed for scrolling
 			const contentLength = this.getTextWidth(textSpan.textContent) + tickerCaption.offsetWidth;
-			console.log(`Scrolling content width: ${contentLength}px`);
 			
 			// Animate using CSS transitions for smooth scrolling
 			activeContent.style.transition = `margin-left ${scrollSpeed}ms linear`;
@@ -157,11 +154,6 @@ class NewsTicker {
 	 * Start the ticker's main loop
 	 */
 	startTicker() {
-		console.log('Starting ticker with intervals:', {
-			scrollSpeed,
-			showSpeed
-		});
-		
 		setInterval(() => {
 			this.setActiveContent();
 			setTimeout(() => {
@@ -174,7 +166,6 @@ class NewsTicker {
 
 // Initialize the news ticker when the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', () => {
-	console.log('Initializing news ticker...');
 	new NewsTicker();
 });
 
