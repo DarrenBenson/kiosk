@@ -77,7 +77,7 @@ $slideshowImages = getSlideshowImages();
     <link href="favicon.ico" rel="shortcut icon" type="image/x-icon">
     <script src="scripts/ticker.js"></script>
     <script src="scripts/slideshow.js"></script>
-    <script src="scripts/currency.js"></script>
+    <script src="scripts/finance.js"></script>
     <title>The Game Over Bar</title>
 </head>
 <body style="width:1024px">

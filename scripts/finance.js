@@ -26,7 +26,7 @@ async function fetchCurrencyRates() {
 // Updates the date and time display
 function updateDateTime() {
     const now = new Date();
-    const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    const dateOptions = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
     const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
     
     document.querySelector('#datetime .date').textContent = now.toLocaleDateString('en-GB', dateOptions);
@@ -39,9 +39,14 @@ function startCurrencyUpdates() {
     setInterval(fetchCurrencyRates, 60000); // Update every minute
 }
 
+// Initializes date and time updates and refreshes them every second
+function startDateTimeUpdates() {
+    updateDateTime(); // Initial update
+    setInterval(updateDateTime, 1000); // Update time every second
+}
+
 // Initialize all updates when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     startCurrencyUpdates();
-    updateDateTime();
-    setInterval(updateDateTime, 1000); // Update time every second
+    startDateTimeUpdates();
 }); 
