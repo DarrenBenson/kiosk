@@ -15,12 +15,22 @@ async function fetchCurrencyRates() {
         const data = await response.json();
         
         // Update the DOM with new rates
-        document.querySelector('#usd-rate span').textContent = data.rates.USD.toFixed(2);
-        document.querySelector('#eur-rate span').textContent = data.rates.EUR.toFixed(2);
-        document.querySelector('#btc-rate span').textContent = btcRate;
+        document.querySelector('#usd-rate span').textContent = "£" + (1 / data.rates.USD).toFixed(2);
+        document.querySelector('#eur-rate span').textContent = "£" + (1 / data.rates.EUR).toFixed(2);
+        document.querySelector('#btc-rate span').textContent = "£" + btcRate;
     } catch (error) {
         console.error('Error fetching currency rates:', error);
     }
+}
+
+// Updates the date and time display
+function updateDateTime() {
+    const now = new Date();
+    const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+    
+    document.querySelector('#datetime .date').textContent = now.toLocaleDateString('en-GB', dateOptions);
+    document.querySelector('#datetime .time').textContent = now.toLocaleTimeString('en-GB', timeOptions);
 }
 
 // Initializes currency updates and refreshes them every minute
@@ -29,5 +39,9 @@ function startCurrencyUpdates() {
     setInterval(fetchCurrencyRates, 60000); // Update every minute
 }
 
-// Start updates when DOM is loaded
-document.addEventListener('DOMContentLoaded', startCurrencyUpdates); 
+// Initialize all updates when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    startCurrencyUpdates();
+    updateDateTime();
+    setInterval(updateDateTime, 1000); // Update time every second
+}); 

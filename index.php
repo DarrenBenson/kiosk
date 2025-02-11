@@ -73,7 +73,7 @@ $slideshowImages = getSlideshowImages();
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="style/slideshow.css">
     <link rel="stylesheet" type="text/css" href="style/ticker.css">
-    <link rel="stylesheet" type="text/css" href="style/currency.css">
+    <link rel="stylesheet" type="text/css" href="style/finance.css">
     <link href="favicon.ico" rel="shortcut icon" type="image/x-icon">
     <script src="scripts/ticker.js"></script>
     <script src="scripts/slideshow.js"></script>
@@ -90,10 +90,23 @@ $slideshowImages = getSlideshowImages();
         </ul>
     </div>
 
-    <div class="currency-rates">
-        <div class="rate" id="usd-rate">USD: <span>Loading...</span></div>
-        <div class="rate" id="eur-rate">EUR: <span>Loading...</span></div>
-        <div class="rate" id="btc-rate">BTC: <span>Loading...</span></div>
+    <div class="finance-container">
+        <div class="finance-data" id="usd-rate">
+            <span class="time">Loading...</span>
+            <span class="date">USD</span>
+        </div>
+        <div class="finance-data" id="eur-rate">            
+            <span class="time">Loading...</span>
+            <span class="date">EUR</span>
+        </div>
+        <div class="finance-data" id="btc-rate">
+            <span class="time">Loading...</span>
+            <span class="date">BTC</span>
+        </div>
+        <div class="finance-data" id="datetime">
+            <span class="time">Loading...</span>
+            <span class="date">Loading...</span>
+        </div>
     </div>
 
     <img src="images/GameOverBar.png" alt="Game Over Bar" class="titlelogo1024">

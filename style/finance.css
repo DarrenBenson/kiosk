@@ -1,0 +1,35 @@
+.finance-container {
+    position: relative;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 10px 20px;
+    color: #fff;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.finance-data {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 14px;
+}
+
+.finance-data span {
+    color: #4CAF50;
+}
+
+.finance-data .date {
+    font-size: 12px;
+    color: #fff;
+}
+
+.finance-data .time {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+#datetime {
+    margin-left: auto;
+} 
