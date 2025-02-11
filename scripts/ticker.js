@@ -1,6 +1,6 @@
 // Configuration constants - adjust these values to fix timing issues
-const showSpeed = 250;    // Time in ms to show new content (0.25 seconds)
-const scrollSpeed = 25000; // Delay between transitions (15 seconds)
+const showSpeed = 250;     // Animation duration for showing new content
+const scrollSpeed = 25000; // Time each news item remains visible
 
 /**
  * NewsTicker Class
@@ -17,7 +17,7 @@ class NewsTicker {
 		
 		// Debug check: Verify ticker items exist
 		if (this.tickerItems.length === 0) {
-			console.error('No ticker items found. Check DOM structure and CSS classes.');
+			console.error('No ticker items found');
 			return;
 		}
 		
@@ -178,14 +178,15 @@ document.addEventListener('DOMContentLoaded', () => {
 	new NewsTicker();
 });
 
+// Helper method to calculate text width for scrolling animations
 String.prototype.textWidth = function(font) {
-	var f = font || '1.1em "Helvetica Neue",Helvetica,Arial,sans-serif',
-		obj = $('<div></div>')
-			  .text(this)
-			  .css({'position': 'absolute', 'float': 'left', 'white-space': 'nowrap', 'visibility': 'hidden', 'font': f})
-			  .appendTo($('body')),
-		width = obj.width();  
+	const f = font || '1.1em "Helvetica Neue",Helvetica,Arial,sans-serif';
+	const obj = $('<div></div>')
+		  .text(this)
+		  .css({'position': 'absolute', 'float': 'left', 'white-space': 'nowrap', 'visibility': 'hidden', 'font': f})
+		  .appendTo($('body'));
+	const width = obj.width();  
 	obj.remove();  
 	return width;
-  }
+}
 

@@ -1,4 +1,5 @@
 :root {
+	/* Core theme variables */
 	--ticker-height: 60px; /* Height of the ticker container */
 	--caption-height: 50%; /* Height of the ticker caption */
 	--caption-bg-color: #EC0B43; /* Background color for ticker caption */
@@ -28,7 +29,7 @@
 	border-top: 1px solid var(--text-color); /* Top border */
 }
 
-/* Ticker caption styles */
+/* Caption overlay that remains fixed while content scrolls */
 .ticker-caption {
 	height: var(--caption-height); /* Set height from variable */
 	width: 100%; /* Full width */
@@ -48,7 +49,7 @@
 	font-weight: bold; /* Bold text */
 }
 
-/* Ticker list styles */
+/* Container for scrolling content */
 .ticker-container ul {
 	list-style: none; /* Remove list style */
 	padding: 0; /* Remove padding */
@@ -56,6 +57,7 @@
 	margin-left: 170px; /* Margin for positioning */
 }
 
+/* Animation states for ticker items */
 .ticker-container ul div {
 	overflow: hidden; /* Hide overflow */
 	position: absolute; /* Position absolutely */
@@ -86,7 +88,7 @@
 	color: var(--caption-bg-color); /* Set link color */
 }
 
-/* Adjustments for smaller ticker */
+/* Mobile-friendly adjustments */
 .ticker-container {
 	height: 30px; /* Reduced height for smaller ticker */
 	text-align: left; /* Align text to the left */

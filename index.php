@@ -1,13 +1,16 @@
 <?php
-// Load news items from BBC RSS feed
+/**
+ * Fetches and sanitizes BBC news feed items with fallback content
+ * @return array Array of news items with title, description, link, and date
+ */
 function getNewsItems() {
-    $items = []; // Initialize an array to hold news items
-    $xml = @simplexml_load_file("https://feeds.bbci.co.uk/news/uk/rss.xml"); // Load the RSS feed
+    $items = [];
+    // Using @ to suppress warnings as we handle the failure case
+    $xml = @simplexml_load_file("https://feeds.bbci.co.uk/news/uk/rss.xml");
     
-    // Check if the RSS feed was loaded successfully
     if ($xml === false) {
-        error_log("Failed to load BBC RSS feed"); // Log an error if loading fails
-        // Provide fallback news items
+        error_log("Failed to load BBC RSS feed");
+        // Fallback content shown when feed is unavailable
         return [
             [
                 'title' => 'Welcome to Game Over Bar',
@@ -24,69 +27,65 @@ function getNewsItems() {
         ];
     }
     
-    // Iterate through each item in the RSS feed
     foreach ($xml->channel->item as $item) {
+        // Sanitize all feed content to prevent XSS
         $items[] = [
-            'title' => htmlspecialchars((string)$item->title, ENT_QUOTES, 'UTF-8'), // Sanitize title
-            'description' => htmlspecialchars((string)$item->description, ENT_QUOTES, 'UTF-8'), // Sanitize description
-            'link' => htmlspecialchars((string)$item->link, ENT_QUOTES, 'UTF-8'), // Sanitize link
-            'pubDate' => htmlspecialchars((string)$item->pubDate, ENT_QUOTES, 'UTF-8') // Sanitize publication date
+            'title' => htmlspecialchars((string)$item->title, ENT_QUOTES, 'UTF-8'),
+            'description' => htmlspecialchars((string)$item->description, ENT_QUOTES, 'UTF-8'),
+            'link' => htmlspecialchars((string)$item->link, ENT_QUOTES, 'UTF-8'),
+            'pubDate' => htmlspecialchars((string)$item->pubDate, ENT_QUOTES, 'UTF-8')
         ];
     }
     
-    return $items; // Return the array of news items
+    return $items;
 }
 
-// Load slideshow images from a specific directory
+/**
+ * Loads images from content/4x3 directory for the slideshow
+ * @return array Array of image data with path, sequence number, and total count
+ */
 function getSlideshowImages() {
-    $images = []; // Initialize an array to hold slideshow images
-    $files = glob("content/4x3/*"); // Get all image files in the specified directory
+    $images = [];
+    // Expects images to be in the content/4x3 directory
+    $files = glob("content/4x3/*");
     
-    // Check if any files were found
     if (!empty($files)) {
-        // Iterate through each file and prepare image data
         foreach ($files as $index => $file) {
             $images[] = [
-                'path' => htmlspecialchars($file, ENT_QUOTES, 'UTF-8'), // Sanitize file path
-                'number' => $index + 1, // Image number in the slideshow
-                'total' => count($files) // Total number of images
+                'path' => htmlspecialchars($file, ENT_QUOTES, 'UTF-8'),
+                'number' => $index + 1,
+                'total' => count($files)
             ];
         }
     }
     
-    return $images; // Return the array of slideshow images
+    return $images;
 }
 
-// Fetch news items and slideshow images
-$newsItems = getNewsItems(); // Call function to get news items
-$slideshowImages = getSlideshowImages(); // Call function to get slideshow images
+// Initialize content before rendering
+$newsItems = getNewsItems();
+$slideshowImages = getSlideshowImages();
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="style/slideshow.css"> <!-- Link to slideshow CSS -->
-    <link rel="stylesheet" type="text/css" href="style/ticker.css"> <!-- Link to ticker CSS -->
-    <link rel="stylesheet" type="text/css" href="style/currency.css"> <!-- Add currency CSS -->
-    <link href="favicon.ico" rel="shortcut icon" type="image/x-icon"> <!-- Favicon -->
-    <script src="scripts/ticker.js"></script> <!-- Link to ticker JavaScript -->
-    <script src="scripts/slideshow.js"></script> <!-- Link to slideshow JavaScript -->
-    <script src="scripts/currency.js"></script> <!-- Add currency JavaScript -->
-    <title>The Game Over Bar - News and Events</title> <!-- Page title -->
+    <link rel="stylesheet" type="text/css" href="style/slideshow.css">
+    <link rel="stylesheet" type="text/css" href="style/ticker.css">
+    <link rel="stylesheet" type="text/css" href="style/currency.css">
+    <link href="favicon.ico" rel="shortcut icon" type="image/x-icon">
+    <script src="scripts/ticker.js"></script>
+    <script src="scripts/slideshow.js"></script>
+    <script src="scripts/currency.js"></script>
+    <title>The Game Over Bar</title>
 </head>
-<body>
+<body style="width:1024px">
     <div class="ticker-container">
         <div class="ticker-caption"><p>Breaking News</p></div>
         <ul>
             <?php foreach ($newsItems as $item): ?>
-                <div>
-                    <li>
-                        <span>
-                            <strong><?= $item['title'] ?></strong> - <?= $item['description'] ?>
-                        </span>
-                    </li>
-                </div>
+                <div><li><span><strong><?= $item['title'] ?></strong> - <?= $item['description'] ?></span></li></div>
             <?php endforeach; ?>
         </ul>
     </div>
@@ -97,17 +96,17 @@ $slideshowImages = getSlideshowImages(); // Call function to get slideshow image
         <div class="rate" id="btc-rate">BTC: <span>Loading...</span></div>
     </div>
 
-    <img src="images/GameOverBar.png" alt="Game Over Bar" class="titlelogo">
+    <img src="images/GameOverBar.png" alt="Game Over Bar" class="titlelogo1024">
     
     <div class="slideshow-container">
-        <?php foreach ($slideshowImages as $image): ?> <!-- Loop through slideshow images -->
+        <?php foreach ($slideshowImages as $image): ?>
             <div class="mySlides fade">
-                <div class="numbertext"><?= $image['number'] ?> / <?= $image['total'] ?></div> <!-- Display image number -->
-                <img src="<?= $image['path'] ?>" style="width:1024px" alt="Slideshow Image"> <!-- Slideshow image -->
+                <div class="numbertext"><?= $image['number'] ?> / <?= $image['total'] ?></div>
+                <img src="<?= $image['path'] ?>" style="width:1024px" alt="Slideshow Image">
             </div>
         <?php endforeach; ?>
         
-        <img src="images/BensonGamesLogo.png" alt="Benson Games Logo" class="logo"> <!-- Benson Games logo -->
+        <img src="images/BensonGamesLogo.png" alt="Benson Games Logo" class="logo1024">
     </div>
 </body>
 </html>

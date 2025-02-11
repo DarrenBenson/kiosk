@@ -1,5 +1,5 @@
-// Configuration
-const slideSpeed = 10000; // Ten second delay between slide transitions (adjust if slides change too fast/slow)
+// Time in milliseconds between slide transitions
+const slideSpeed = 10000;
 let slideIndex = 0;
 
 /**
@@ -25,7 +25,7 @@ function showSlides() {
         slide.style.display = "none";  
     });
 
-    // Move to next slide, wrapping around to start if at end
+    // Move to next slide, wrapping around to start if at the end
     slideIndex = (slideIndex + 1) % slides.length;
     
     slides[slideIndex].style.display = "block";  

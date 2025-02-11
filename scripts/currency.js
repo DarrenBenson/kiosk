@@ -1,4 +1,5 @@
-// Function to fetch currency rates from API
+// Fetches and updates currency exchange rates for USD, EUR, and BTC against GBP
+// Uses CoinGecko API for BTC and ExchangeRate API for fiat currencies
 async function fetchCurrencyRates() {
     try {
         // Fetch rates from CoinGecko API for BTC
@@ -22,7 +23,7 @@ async function fetchCurrencyRates() {
     }
 }
 
-// Update rates every minute
+// Initializes currency updates and refreshes them every minute
 function startCurrencyUpdates() {
     fetchCurrencyRates(); // Initial fetch
     setInterval(fetchCurrencyRates, 60000); // Update every minute
