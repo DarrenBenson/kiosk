@@ -1,0 +1,19 @@
+.currency-rates {
+    position: relative;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 10px 20px;
+    color: #fff;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    display: flex;
+    gap: 20px;
+}
+
+.rate {
+    font-size: 14px;
+    display: inline-block;
+}
+
+.rate span {
+    font-weight: bold;
+    color: #4CAF50;
+} 

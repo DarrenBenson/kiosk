@@ -68,20 +68,22 @@ $slideshowImages = getSlideshowImages(); // Call function to get slideshow image
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="style/slideshow.css"> <!-- Link to slideshow CSS -->
     <link rel="stylesheet" type="text/css" href="style/ticker.css"> <!-- Link to ticker CSS -->
+    <link rel="stylesheet" type="text/css" href="style/currency.css"> <!-- Add currency CSS -->
     <link href="favicon.ico" rel="shortcut icon" type="image/x-icon"> <!-- Favicon -->
     <script src="scripts/ticker.js"></script> <!-- Link to ticker JavaScript -->
     <script src="scripts/slideshow.js"></script> <!-- Link to slideshow JavaScript -->
+    <script src="scripts/currency.js"></script> <!-- Add currency JavaScript -->
     <title>The Game Over Bar - News and Events</title> <!-- Page title -->
 </head>
 <body>
     <div class="ticker-container">
         <div class="ticker-caption"><p>Breaking News</p></div>
         <ul>
-            <?php foreach ($newsItems as $item): ?> <!-- Loop through news items -->
+            <?php foreach ($newsItems as $item): ?>
                 <div>
                     <li>
                         <span>
-                            <strong><?= $item['title'] ?></strong> - <?= $item['description'] ?> <!-- Display title and description -->
+                            <strong><?= $item['title'] ?></strong> - <?= $item['description'] ?>
                         </span>
                     </li>
                 </div>
@@ -89,7 +91,13 @@ $slideshowImages = getSlideshowImages(); // Call function to get slideshow image
         </ul>
     </div>
 
-    <img src="images/GameOverBar.png" alt="Game Over Bar" class="titlelogo"> <!-- Logo image -->
+    <div class="currency-rates">
+        <div class="rate" id="usd-rate">USD: <span>Loading...</span></div>
+        <div class="rate" id="eur-rate">EUR: <span>Loading...</span></div>
+        <div class="rate" id="btc-rate">BTC: <span>Loading...</span></div>
+    </div>
+
+    <img src="images/GameOverBar.png" alt="Game Over Bar" class="titlelogo">
     
     <div class="slideshow-container">
         <?php foreach ($slideshowImages as $image): ?> <!-- Loop through slideshow images -->
