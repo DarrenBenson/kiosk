@@ -1,7 +1,7 @@
 <?php
 /**
  * Fetches and sanitizes BBC news feed items with fallback content
- * @return array Array of news items with title, description, link, and date
+ * @return array Array of news items with title, description, link, and finance-value
  */
 function getNewsItems() {
     $items = [];
@@ -16,13 +16,13 @@ function getNewsItems() {
                 'title' => 'Welcome to Game Over Bar',
                 'description' => 'Check back later for the latest news and updates.',
                 'link' => '#',
-                'pubDate' => date('D, d M Y H:i:s O')
+                'pubDate' => finance-value('D, d M Y H:i:s O')
             ],
             [
                 'title' => 'Technical Difficulties',
                 'description' => 'We are currently unable to load the latest news. Please try again later.',
                 'link' => '#',
-                'pubDate' => date('D, d M Y H:i:s O')
+                'pubDate' => finance-value('D, d M Y H:i:s O')
             ]
         ];
     }
@@ -92,20 +92,48 @@ $slideshowImages = getSlideshowImages();
 
     <div class="finance-container">
         <div class="finance-data" id="usd-rate">
-            <span class="time">Loading...</span>
-            <span class="date">USD</span>
+            <span class="finance-label">Loading...</span>
+            <span class="finance-value">USD</span>
         </div>
         <div class="finance-data" id="eur-rate">            
-            <span class="time">Loading...</span>
-            <span class="date">EUR</span>
+            <span class="finance-label">Loading...</span>
+            <span class="finance-value">EUR</span>
         </div>
         <div class="finance-data" id="btc-rate">
-            <span class="time">Loading...</span>
-            <span class="date">BTC</span>
+            <span class="finance-label">Loading...</span>
+            <span class="finance-value">BTC</span>
+        </div>
+        <div class="finance-data" id="aapl-price">
+            <span class="finance-label">Loading...</span>
+            <span class="finance-value">AAPL</span>
+        </div>
+        <div class="finance-data" id="googl-price">
+            <span class="finance-label">Loading...</span>
+            <span class="finance-value">GOOGL</span>
+        </div>
+        <div class="finance-data" id="msft-price">
+            <span class="finance-label">Loading...</span>
+            <span class="finance-value">MSFT</span>
+        </div>
+        <div class="finance-data" id="tsla-price">
+            <span class="finance-label">Loading...</span>
+            <span class="finance-value">TSLA</span>
+        </div>
+        <div class="finance-data" id="meta-price">
+            <span class="finance-label">Loading...</span>
+            <span class="finance-value">META</span>
+        </div>
+        <div class="finance-data" id="now-price">
+            <span class="finance-label">Loading...</span>
+            <span class="finance-value">NOW</span>
+        </div>
+        <div class="finance-data" id="nvda-price">
+            <span class="finance-label">Loading...</span>
+            <span class="finance-value">NVDA</span>
         </div>
         <div class="finance-data" id="datetime">
-            <span class="time">Loading...</span>
-            <span class="date">Loading...</span>
+            <span class="finance-label">Loading...</span>
+            <span class="finance-value">Loading...</span>
         </div>
     </div>
 
