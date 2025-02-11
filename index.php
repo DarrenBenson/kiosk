@@ -74,10 +74,12 @@ $slideshowImages = getSlideshowImages();
     <link rel="stylesheet" type="text/css" href="style/slideshow.css">
     <link rel="stylesheet" type="text/css" href="style/ticker.css">
     <link rel="stylesheet" type="text/css" href="style/finance.css">
+    <link rel="stylesheet" type="text/css" href="style/weather.css">
     <link href="favicon.ico" rel="shortcut icon" type="image/x-icon">
     <script src="scripts/ticker.js"></script>
     <script src="scripts/slideshow.js"></script>
     <script src="scripts/finance.js"></script>
+    <script src="scripts/weather.js"></script>
     <title>The Game Over Bar</title>
 </head>
 <body style="width:1024px">
@@ -139,13 +141,48 @@ $slideshowImages = getSlideshowImages();
 
     <img src="images/GameOverBar.png" alt="Game Over Bar" class="titlelogo1024">
     
-    <div class="slideshow-container">
+    <div class="slideshow-container" style="position: relative;">
         <?php foreach ($slideshowImages as $image): ?>
             <div class="mySlides fade">
                 <div class="numbertext"><?= $image['number'] ?> / <?= $image['total'] ?></div>
                 <img src="<?= $image['path'] ?>" style="width:1024px" alt="Slideshow Image">
             </div>
         <?php endforeach; ?>
+        
+        <div class="weather-container">
+            <div class="current-weather">
+                <div class="weather-info">
+                    <div class="location">Didcot, UK</div>
+                    <div class="description" id="weather-desc">--</div>
+                </div>
+                <div class="temp-now">
+                    <img src="" alt="Current Weather" class="weather-icon" id="current-icon">
+                    <div class="temps">
+                        <span id="current-temp">--°C</span>
+                        <span class="feels-like">Feels like <span id="feels-like-temp">--°C</span></span>
+                    </div>
+                </div>
+                <div class="sun-times">
+                    <div class="sunrise">
+                        <img src="images/sunrise.png" alt="Sunrise" class="sun-icon">
+                        <span id="sunrise-time">--:--</span>
+                    </div>
+                    <div class="sunset">
+                        <img src="images/sunset.png" alt="Sunset" class="sun-icon">
+                        <span id="sunset-time">--:--</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hourly-forecast">
+                <?php for($i = 1; $i <= 8; $i++): ?>
+                    <div class="forecast-hour">
+                        <div class="time" id="hour-<?=$i?>">--:--</div>
+                        <img src="" alt="Forecast" class="weather-icon small" id="icon-<?=$i?>">
+                        <div class="temp" id="temp-<?=$i?>">--°C</div>
+                    </div>
+                <?php endfor; ?>
+            </div>
+        </div>
         
         <img src="images/BensonGamesLogo.png" alt="Benson Games Logo" class="logo1024">
     </div>

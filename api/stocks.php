@@ -3,8 +3,8 @@ header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 
 // API credentials
-define('API_KEY', 'AKXGKQCBU9D1NPC3F3S0B');
-define('API_SECRET', 'hMsDU8eYdKKEy0Ej8KfSZTjsuhaQv8Bd3WuGgTtnt');
+define('API_KEY', 'AKXGKQCBU91NPC3F3S0B');
+define('API_SECRET', 'hMsDU8eYdKKEy0Ej8fSZTjsuhaQv8Bd3WuGgTtnt');
 
 /**
  * Fetches current GBP/USD exchange rate
