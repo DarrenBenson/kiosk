@@ -2,7 +2,7 @@
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 
-define('WEATHER_API_KEY', '0df11eccd2946a27007d56bec0516152');
+define('WEATHER_API_KEY', 'add here);
 define('DIDCOT_LAT', '51.6095');
 define('DIDCOT_LON', '-1.2401');
 
