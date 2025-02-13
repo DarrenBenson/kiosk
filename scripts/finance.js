@@ -11,9 +11,9 @@ async function fetchCurrencyRates() {
         const data = await response.json();
         
         // Update the DOM with new rates
-        document.querySelector('#usd-rate span').textContent = "£" + (1 / data.rates.USD).toFixed(2);
-        document.querySelector('#eur-rate span').textContent = "£" + (1 / data.rates.EUR).toFixed(2);
-        document.querySelector('#btc-rate span').textContent = "£" + btcData.bitcoin.gbp.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 0});
+        document.querySelector('#usd-data span').textContent = "£" + (1 / data.rates.USD).toFixed(2);
+        document.querySelector('#eur-data span').textContent = "£" + (1 / data.rates.EUR).toFixed(2);
+        document.querySelector('#btc-data span').textContent = "£" + btcData.bitcoin.gbp.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 0});
     } catch (error) {
         console.error('Error fetching currency rates:', error);
     }
@@ -33,7 +33,7 @@ async function fetchStockPrices() {
         
         // Update DOM with stock prices
         Object.entries(data).forEach(([symbol, price]) => {
-            const elementId = `#${symbol.toLowerCase()}-price .finance-label`;
+            const elementId = `#${symbol.toLowerCase()}-data .finance-label`;
             document.querySelector(elementId).textContent = `£${price.toFixed(2)}`;
         });
     } catch (error) {

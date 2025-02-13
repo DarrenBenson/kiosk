@@ -1,6 +1,6 @@
 .weather-container {
     position: fixed; /* Fixed position for the container */
-    top: 699px;
+    bottom: 20px;
     left: 567px;
     transform: translateX(-50%);
     background: rgba(0, 0, 0, 0.8);
@@ -57,7 +57,7 @@
     margin-bottom: 2px;
 }
 
-.weather-icon {
+img.weather-icon {
     width: 32px;
     height: 32px;
 }
@@ -85,9 +85,9 @@
     font-size: 11px;
 }
 
-.sun-icon {
-    width: 16px;
-    height: 16px;
+img.sun-icon {
+    width: 32px;
+    height: 32px;
 }
 
 .weather-info {

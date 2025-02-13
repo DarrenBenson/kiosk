@@ -1,34 +1,31 @@
 <?php
 /**
  * Fetches and sanitizes BBC news feed items with fallback content
- * @return array Array of news items with title, description, link, and finance-value
+ * @return array Array of news items with title, description, link, and date
  */
 function getNewsItems() {
     $items = [];
-    // Using @ to suppress warnings as we handle the failure case
     $xml = @simplexml_load_file("https://feeds.bbci.co.uk/news/uk/rss.xml");
     
     if ($xml === false) {
         error_log("Failed to load BBC RSS feed");
-        // Fallback content shown when feed is unavailable
         return [
             [
                 'title' => 'Welcome to Game Over Bar',
                 'description' => 'Check back later for the latest news and updates.',
                 'link' => '#',
-                'pubDate' => finance-value('D, d M Y H:i:s O')
+                'pubDate' => date('D, d M Y H:i:s O')
             ],
             [
                 'title' => 'Technical Difficulties',
                 'description' => 'We are currently unable to load the latest news. Please try again later.',
                 'link' => '#',
-                'pubDate' => finance-value('D, d M Y H:i:s O')
+                'pubDate' => date('D, d M Y H:i:s O')
             ]
         ];
     }
     
     foreach ($xml->channel->item as $item) {
-        // Sanitize all feed content to prevent XSS
         $items[] = [
             'title' => htmlspecialchars((string)$item->title, ENT_QUOTES, 'UTF-8'),
             'description' => htmlspecialchars((string)$item->description, ENT_QUOTES, 'UTF-8'),
@@ -46,25 +43,21 @@ function getNewsItems() {
  */
 function getSlideshowImages() {
     $images = [];
-    // Expects images to be in the content/4x3 directory
     $files = glob("content/4x3/*");
     
     if (!empty($files)) {
         foreach ($files as $index => $file) {
-            $images[] = [
-                'path' => htmlspecialchars($file, ENT_QUOTES, 'UTF-8'),
-                'number' => $index + 1,
-                'total' => count($files)
-            ];
+            // Add inline style with background image to the slide div
+            echo '<div class="mySlides fade" style="background-image: url(\'' . $file . '\');">';
+            echo '<div class="numbertext">' . ($index + 1) . ' / ' . count($files) . '</div>';
+            echo '</div>';
         }
     }
     
     return $images;
 }
 
-// Initialize content before rendering
-$newsItems = getNewsItems();
-$slideshowImages = getSlideshowImages();
+$newsItems = getNewsItems();        
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -82,7 +75,7 @@ $slideshowImages = getSlideshowImages();
     <script src="scripts/weather.js"></script>
     <title>The Game Over Bar</title>
 </head>
-<body style="width:1024px">
+<body>
     <div class="ticker-container">
         <div class="ticker-caption"><p>Breaking News</p></div>
         <ul>
@@ -93,61 +86,24 @@ $slideshowImages = getSlideshowImages();
     </div>
 
     <div class="finance-container">
-        <div class="finance-data" id="usd-rate">
-            <span class="finance-label">Loading...</span>
-            <span class="finance-value">USD</span>
-        </div>
-        <div class="finance-data" id="eur-rate">            
-            <span class="finance-label">Loading...</span>
-            <span class="finance-value">EUR</span>
-        </div>
-        <div class="finance-data" id="btc-rate">
-            <span class="finance-label">Loading...</span>
-            <span class="finance-value">BTC</span>
-        </div>
-        <div class="finance-data" id="aapl-price">
-            <span class="finance-label">Loading...</span>
-            <span class="finance-value">AAPL</span>
-        </div>
-        <div class="finance-data" id="googl-price">
-            <span class="finance-label">Loading...</span>
-            <span class="finance-value">GOOGL</span>
-        </div>
-        <div class="finance-data" id="msft-price">
-            <span class="finance-label">Loading...</span>
-            <span class="finance-value">MSFT</span>
-        </div>
-        <div class="finance-data" id="tsla-price">
-            <span class="finance-label">Loading...</span>
-            <span class="finance-value">TSLA</span>
-        </div>
-        <div class="finance-data" id="meta-price">
-            <span class="finance-label">Loading...</span>
-            <span class="finance-value">META</span>
-        </div>
-        <div class="finance-data" id="now-price">
-            <span class="finance-label">Loading...</span>
-            <span class="finance-value">NOW</span>
-        </div>
-        <div class="finance-data" id="nvda-price">
-            <span class="finance-label">Loading...</span>
-            <span class="finance-value">NVDA</span>
-        </div>
+        <?php
+        $financeItems = ['usd', 'eur', 'btc', 'aapl', 'googl', 'msft', 'tsla', 'meta', 'now', 'nvda'];
+        foreach ($financeItems as $item): ?>
+            <div class="finance-data" id="<?= $item ?>-data">
+                <span class="finance-label">Loading...</span>
+                <span class="finance-value"><?= strtoupper($item) ?></span>
+            </div>
+        <?php endforeach; ?>
         <div class="finance-data" id="datetime">
             <span class="finance-label">Loading...</span>
             <span class="finance-value">Loading...</span>
         </div>
     </div>
 
-    <img src="images/GameOverBar.png" alt="Game Over Bar" class="titlelogo1024">
+    <img src="images/GameOverBar.png" alt="Game Over Bar" class="titlelogo">
     
-    <div class="slideshow-container" style="position: relative;">
-        <?php foreach ($slideshowImages as $image): ?>
-            <div class="mySlides fade">
-                <div class="numbertext"><?= $image['number'] ?> / <?= $image['total'] ?></div>
-                <img src="<?= $image['path'] ?>" style="width:1024px" alt="Slideshow Image">
-            </div>
-        <?php endforeach; ?>
+    <div class="slideshow-container">
+        <?php getSlideshowImages(); ?>
         
         <div class="weather-container">
             <div class="current-weather">
@@ -184,7 +140,7 @@ $slideshowImages = getSlideshowImages();
             </div>
         </div>
         
-        <img src="images/BensonGamesLogo.png" alt="Benson Games Logo" class="logo1024">
+        <img src="images/BensonGamesLogo.png" alt="Benson Games Logo" class="logo">
     </div>
 </body>
 </html>
