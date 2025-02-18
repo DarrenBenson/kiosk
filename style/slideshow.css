@@ -72,6 +72,8 @@ body {
     height: 120px; 
     z-index: 2; /* Ensure it appears above other elements */
     border: 1px solid var(--border-color); /* Border around the title logo */
+    border-radius: 10px;  /* Match weather container's border radius */
+    margin-bottom: 10px;
 }
 
 /* Logo styles */

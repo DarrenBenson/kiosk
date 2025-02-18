@@ -75,11 +75,13 @@ $slideshowImages = getSlideshowImages();
     <link rel="stylesheet" type="text/css" href="style/ticker.css">
     <link rel="stylesheet" type="text/css" href="style/finance.css">
     <link rel="stylesheet" type="text/css" href="style/weather.css">
+    <link rel="stylesheet" type="text/css" href="style/bins.css">
     <link href="favicon.ico" rel="shortcut icon" type="image/x-icon">
     <script src="scripts/ticker.js"></script>
     <script src="scripts/slideshow.js"></script>
     <script src="scripts/finance.js"></script>
     <script src="scripts/weather.js"></script>
+    <script src="scripts/bins.js"></script>
     <title>The Game Over Bar</title>
 </head>
 <body style="width:1024px">
@@ -181,6 +183,15 @@ $slideshowImages = getSlideshowImages();
                         <div class="temp" id="temp-<?=$i?>">--°C</div>
                     </div>
                 <?php endfor; ?>
+            </div>
+        </div>
+
+        <div class="bins-container">
+            <div class="bin-date" id="bin-date">--</div>
+            <div class="bin-icons">
+                <div class="bin green" id="green-bin">♻️</div>
+                <div class="bin grey" id="grey-bin">🗑️</div>
+                <div class="bin brown" id="brown-bin">🌱</div>
             </div>
         </div>
         
