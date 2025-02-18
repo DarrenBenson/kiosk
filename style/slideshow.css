@@ -12,20 +12,26 @@
 body {
     overflow: hidden; /* Hide scrollbars */
     margin: 0; /* Remove default margin */
+    max-width: 100vw;
 }
 
 /* Hide slides by default */
 .mySlides {
-    display: none; 
+    display: none;
+    width: 100vw;
+    height: 100vh;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 /* Container for slideshow picture content */
 .slideshow-container {
-    position: relative; 
-    margin: auto; /* Center the slideshow container */
-    display: flex; /* Use flexbox for layout */
-    justify-content: center; /* Center content horizontally */
-    align-items: center; /* Center content vertically */
+    position: fixed;
+    top: var(--ticker-height);
+    width: 100vw;
+    height: calc(100vh - var(--ticker-height)); /* Account for ticker and finance bars */
+    overflow: hidden;
 }
 
 /* Caption text and Number text */
@@ -36,14 +42,14 @@ body {
 }
 
 .text {
-    font-size: 1rem; 
+    font-size: clamp(0.875rem, 2vw, 1.2rem);
     bottom: 8px; 
     width: 100%; 
     text-align: center; 
 }
 
 .numbertext {
-    font-size: 0.75rem; 
+    font-size: clamp(0.75rem, 1.5vw, 1rem);
     top: 0; 
     right: 16px;
 }
@@ -63,24 +69,32 @@ body {
     .text {font-size: 0.6875rem;} 
 }
 
-/* Title logo styles for 1024x768 resolution */
-.titlelogo1024 {
-    position: fixed; /* Fixed position for the title logo */
-    top: 699px;
-    left: 16px; 
-    width: 335px; 
-    height: 120px; 
-    z-index: 2; /* Ensure it appears above other elements */
-    border: 1px solid var(--border-color); /* Border around the title logo */
-    border-radius: 10px;  /* Match weather container's border radius */
-    margin-bottom: 10px;
+/* Override slideshow image styles for logos */
+img.titlelogo, img.logo {
+    position: fixed;
+    bottom: 20px;
+    height: auto;
 }
 
-/* Logo styles */
-.logo1024 {
-    position: fixed; /* Fixed position for the logo */
-    top: 739px;
-    left: 928px;
-    width: 80px;
-    height: 80px;
+img.titlelogo {
+    left: 20px;
+    width: min(30%, 335px);
+    z-index: 2;
+    border: 1px solid var(--border-color);
+    border-radius: 15px; /* Match weather container's rounded corners */
+}
+
+img.logo {
+    right: 20px;
+    width: min(10%, 80px);
+}
+
+@media screen and (max-width: 768px) {
+    img.titlelogo {
+        width: 40%;
+    }
+    
+    img.logo {
+        width: 15%;
+    }
 }
