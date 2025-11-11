@@ -2,9 +2,12 @@
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 
+// Load configuration
+require_once __DIR__ . '/../config.php';
+
 // API credentials
-define('API_KEY', '[key here]');
-define('API_SECRET', '[secret here]');
+define('API_KEY', getConfig('ALPACA_API_KEY', ''));
+define('API_SECRET', getConfig('ALPACA_API_SECRET', ''));
 
 /**
  * Fetches current GBP/USD exchange rate
@@ -24,16 +27,21 @@ function getGBPRate() {
  * @return array Simplified stock price data
  */
 function getStockQuotes($symbols = null, $currency = 'GBP') {
+    // Check if API keys are configured
+    if (empty(API_KEY) || empty(API_SECRET)) {
+        return ['error' => 'Stock API keys not configured'];
+    }
+
     // Default symbols if none provided
     if (!$symbols) {
         $symbols = 'GOOGL';
     }
-    
+
     $url = "https://data.alpaca.markets/v2/stocks/quotes/latest?symbols=" . urlencode($symbols);
-    
+
     // Initialize cURL session
     $ch = curl_init($url);
-    
+
     // Set cURL options
     curl_setopt_array($ch, [
         CURLOPT_RETURNTRANSFER => true,

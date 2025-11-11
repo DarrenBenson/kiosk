@@ -61,5 +61,11 @@ function startDateTimeUpdates() {
 document.addEventListener('DOMContentLoaded', () => {
     fetchCurrencyRates();
     fetchStockPrices();
-    startDateTimeUpdates();    
+    startDateTimeUpdates();
+
+    // Update currency rates every 5 minutes
+    setInterval(fetchCurrencyRates, 300000);
+
+    // Update stock prices every 5 minutes
+    setInterval(fetchStockPrices, 300000);
 }); 
