@@ -15,3 +15,9 @@ Thumbs.db
 # IDE files
 .vscode/
 .idea/
+
+# Environment variables (API keys)
+.env
+
+# Cache files
+cache/
