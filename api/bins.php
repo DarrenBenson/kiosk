@@ -8,63 +8,92 @@ require_once __DIR__ . '/../config.php';
 define('BIN_UPRN', getConfig('BIN_UPRN', ''));
 define('CACHE_FILE', __DIR__ . '/../cache/bins_cache.json');
 define('CACHE_DURATION', 21600); // 6 hours in seconds
+define('BINZONE_URL', 'https://eform.southoxon.gov.uk/ebase/BINZONE_DESKTOP.eb');
 
 /**
- * Fetches bin collection data from Vale of White Horse District Council
- * @return array|null Bin collection data or null on failure
+ * Fetches bin collection data from South Oxfordshire's BinZone API
+ * @return array|null Array of bin collections or null on failure
  */
-function fetchFromCouncil() {
+function fetchFromBinZone() {
     if (empty(BIN_UPRN)) {
         return null;
     }
 
-    // Vale of White Horse uses a form-based system
-    // The endpoint pattern is typically: https://www.whitehorsedc.gov.uk/...
-    // For now, we'll need to implement the actual scraping or API call
-    // This is a placeholder that will need the actual implementation
-
-    $url = "https://www.whitehorsedc.gov.uk/api/bins/" . BIN_UPRN;
+    $cookie = 'SVBINZONE=SOUTH%3AUPRN%40' . urlencode(BIN_UPRN);
+    $url = BINZONE_URL . '?SOVA_TAG=SOUTH&ebd=0';
 
     $ch = curl_init($url);
     curl_setopt_array($ch, [
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_TIMEOUT => 10,
-        CURLOPT_FOLLOWLOCATION => true
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_SSL_VERIFYPEER => true,
+        CURLOPT_SSL_VERIFYHOST => 2,
+        CURLOPT_COOKIE => $cookie,
+        CURLOPT_USERAGENT => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
     ]);
 
     $response = curl_exec($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $error = curl_error($ch);
     curl_close($ch);
 
-    if ($httpCode === 200 && $response) {
-        $data = json_decode($response, true);
-        if ($data) {
-            return $data;
-        }
+    if ($httpCode !== 200 || !$response) {
+        error_log("BinZone API error: HTTP $httpCode - $error");
+        return null;
     }
 
-    return null;
+    return parseHtmlResponse($response);
 }
 
 /**
- * Parse bin collection data into standard format
- * @param array $rawData Raw data from council API
- * @return array Formatted bin collection data
+ * Parse HTML response from BinZone API
+ * Extracts collection dates and bin types from div elements with class "binextra"
+ * @param string $html HTML response from BinZone
+ * @return array|null Array of collections or null if parsing fails
  */
-function parseCollectionData($rawData) {
-    // This will need to be customized based on actual API response
-    // For now, return a standard format
+function parseHtmlResponse($html) {
     $collections = [];
 
-    foreach ($rawData as $collection) {
-        $collections[] = [
-            'date' => $collection['date'],
-            'type' => $collection['type'],
-            'bins' => $collection['bins']
-        ];
+    // Use regex to find all divs with class="binextra"
+    preg_match_all('/<div[^>]*class="binextra"[^>]*>([^<]+)<\/div>/i', $html, $matches);
+
+    if (empty($matches[1])) {
+        error_log("BinZone API: No binextra divs found in response");
+        return null;
     }
 
-    return $collections;
+    foreach ($matches[1] as $content) {
+        $content = trim($content);
+
+        // Parse format: "DD Mon - BIN TYPE" or similar
+        if (preg_match('/^(\d{1,2}\s+\w+)\s*-\s*(.+)$/i', $content, $parsed)) {
+            $dateStr = trim($parsed[1]);
+            $binType = trim($parsed[2]);
+
+            // Convert relative date to timestamp (adds current year)
+            $year = date('Y');
+            $dateObj = DateTime::createFromFormat('j M Y', "$dateStr $year");
+
+            // If date has passed, assume next year
+            if ($dateObj && $dateObj < new DateTime()) {
+                $dateObj = DateTime::createFromFormat('j M Y', "$dateStr " . ($year + 1));
+            }
+
+            if ($dateObj) {
+                $collections[] = [
+                    'date' => $dateObj->format('D j M'),
+                    'timestamp' => $dateObj->getTimestamp(),
+                    'type' => $binType
+                ];
+            }
+        }
+    }
+
+    // Sort by timestamp
+    usort($collections, fn($a, $b) => $a['timestamp'] - $b['timestamp']);
+
+    return empty($collections) ? null : $collections;
 }
 
 /**
@@ -108,26 +137,26 @@ function cacheData($data) {
 }
 
 /**
- * Get next bin collection information
- * @return array Next collection data
+ * Get the next bin collection from a sorted list
+ * @param array $collections Sorted array of collection dates
+ * @return array Next collection or current if none in future
  */
 function getNextCollection($collections) {
-    $now = new DateTime();
+    $now = time();
 
     foreach ($collections as $collection) {
-        $collectionDate = new DateTime($collection['date']);
-        if ($collectionDate >= $now) {
+        if ($collection['timestamp'] >= $now) {
             return $collection;
         }
     }
 
-    // If no future collections, return the last one with a note
+    // If no future collections, return the last one
     return end($collections);
 }
 
 /**
  * Determines bin collection schedule
- * Uses cached data when available, fetches from council when needed
+ * Uses cached data when available, fetches from BinZone when needed
  * Falls back to estimated schedule if API unavailable
  * @return array Bin collection data
  */
@@ -138,27 +167,24 @@ function getBinCollection() {
         return $cached;
     }
 
-    // Try to fetch from council
-    $councilData = fetchFromCouncil();
-    if ($councilData) {
-        $collections = parseCollectionData($councilData);
+    // Try to fetch from BinZone API
+    $collections = fetchFromBinZone();
+    if ($collections) {
         $nextCollection = getNextCollection($collections);
         cacheData($nextCollection);
         return $nextCollection;
     }
 
-    // Fallback to estimated schedule based on typical Vale of White Horse pattern
-    // Note: This is an approximation and should be replaced with actual data
+    // Fallback to estimated schedule
     error_log('Warning: Using estimated bin collection schedule. Configure BIN_UPRN in .env for accurate data.');
 
     $currentWeek = date('W');
     $isEvenWeek = $currentWeek % 2 === 0;
 
-    // Get next collection day (assuming Monday collections)
     $today = new DateTime();
     $daysUntilMonday = (8 - $today->format('N')) % 7;
     if ($daysUntilMonday === 0 && $today->format('H') >= 6) {
-        $daysUntilMonday = 7; // If it's Monday after 6 AM, next Monday
+        $daysUntilMonday = 7;
     }
 
     $nextCollection = clone $today;
@@ -167,11 +193,7 @@ function getBinCollection() {
     return [
         'date' => $nextCollection->format('D j M'),
         'estimated' => true,
-        'bins' => [
-            'green' => true, // Recycling typically every week
-            'grey' => $isEvenWeek,
-            'brown' => !$isEvenWeek
-        ]
+        'type' => $isEvenWeek ? 'GREEN BIN & GREY BIN' : 'GREEN BIN & GARDEN WASTE BIN'
     ];
 }
 
