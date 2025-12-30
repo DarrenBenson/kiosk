@@ -1,4 +1,14 @@
 <?php
+define('KIOSK_APP', true);
+
+// Check for config file
+if (!file_exists(__DIR__ . '/config.php')) {
+    die('Configuration file not found. Please copy config.example.php to config.php and configure your settings.');
+}
+
+require_once __DIR__ . '/config.php';
+date_default_timezone_set(TIMEZONE);
+
 /**
  * Fetches and sanitizes BBC news feed items with fallback content
  * @return array Array of news items with title, description, link, and date
@@ -89,7 +99,7 @@ $newsItems = getNewsItems();
 
     <div class="finance-container">
         <?php
-        $financeItems = ['usd', 'eur', 'btc', 'aapl', 'googl', 'msft', 'tsla', 'meta', 'now', 'nvda'];
+        $financeItems = ['usd', 'eur', 'btc', 'aapl', 'googl', 'msft', 'amzn', 'meta', 'amd', 'nvda', 'inch'];
         foreach ($financeItems as $item): ?>
             <div class="finance-data" id="<?= $item ?>-data">
                 <span class="finance-label">Loading...</span>
@@ -143,11 +153,23 @@ $newsItems = getNewsItems();
         </div>
 
         <div class="bins-container">
-            <div class="bin-date" id="bin-date">--</div>
+            <div class="bins-header">
+                <div class="bins-title">Next Collection</div>
+                <div class="bin-date" id="bin-date">--</div>
+            </div>
             <div class="bin-icons">
-                <div class="bin green" id="green-bin">♻️</div>
-                <div class="bin grey" id="grey-bin">🗑️</div>
-                <div class="bin brown" id="brown-bin">🌱</div>
+                <div class="bin" id="green-bin" data-type="green">
+                    <span class="bin-icon">♻️</span>
+                    <span class="bin-label">Recycling</span>
+                </div>
+                <div class="bin" id="grey-bin" data-type="grey">
+                    <span class="bin-icon">🗑️</span>
+                    <span class="bin-label">Rubbish</span>
+                </div>
+                <div class="bin" id="brown-bin" data-type="brown">
+                    <span class="bin-icon">🌱</span>
+                    <span class="bin-label">Garden</span>
+                </div>
             </div>
         </div>
         

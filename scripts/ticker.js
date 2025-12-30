@@ -168,16 +168,3 @@ class NewsTicker {
 document.addEventListener('DOMContentLoaded', () => {
 	new NewsTicker();
 });
-
-// Helper method to calculate text width for scrolling animations
-String.prototype.textWidth = function(font) {
-	const f = font || '1.1em "Helvetica Neue",Helvetica,Arial,sans-serif';
-	const obj = $('<div></div>')
-		  .text(this)
-		  .css({'position': 'absolute', 'float': 'left', 'white-space': 'nowrap', 'visibility': 'hidden', 'font': f})
-		  .appendTo($('body'));
-	const width = obj.width();  
-	obj.remove();  
-	return width;
-}
-

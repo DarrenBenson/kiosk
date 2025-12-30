@@ -1,40 +1,51 @@
-// Time in milliseconds between slide transitions
-const slideSpeed = 10000;
-let slideIndex = 0;
-
 /**
- * Handles the slideshow functionality by cycling through slides
- * Each slide is hidden and the next one is shown in sequence
- * 
- * Debug tips:
- * - If no slides appear, check if elements with class "mySlides" exist
- * - If slides don't transition, verify slideSpeed value
- * - If slides are out of order, check the DOM structure
+ * Slideshow Display Class
+ * Cycles through images with configurable timing
  */
-function showSlides() {
-    // Get all slides and hide them
-    const slides = document.getElementsByClassName("mySlides");
-    
-    // Debug check: Verify slides were found
-    if (slides.length === 0) {
-        console.warn('No slides found with class "mySlides"');
-        return;
+class Slideshow {
+    /**
+     * Creates a new Slideshow instance
+     * @param {number} slideSpeed - Time in milliseconds between transitions (default: 10000)
+     */
+    constructor(slideSpeed = 10000) {
+        this.slideSpeed = slideSpeed;
+        this.slideIndex = 0;
+        this.slides = document.getElementsByClassName('mySlides');
+
+        if (this.slides.length === 0) {
+            console.warn('No slides found with class "mySlides"');
+            return;
+        }
+
+        this.start();
     }
 
-    Array.from(slides).forEach(slide => {
-        slide.style.display = "none";  
-    });
+    /**
+     * Shows the next slide and schedules the following transition
+     */
+    showNext() {
+        // Hide all slides
+        Array.from(this.slides).forEach(slide => {
+            slide.style.display = 'none';
+        });
 
-    // Move to next slide, wrapping around to start if at the end
-    slideIndex = (slideIndex + 1) % slides.length;
-    
-    slides[slideIndex].style.display = "block";  
+        // Move to next slide, wrapping around
+        this.slideIndex = (this.slideIndex + 1) % this.slides.length;
 
-    // Schedule next slide transition
-    setTimeout(showSlides, slideSpeed); 
+        // Show current slide
+        this.slides[this.slideIndex].style.display = 'block';
+
+        // Schedule next transition
+        setTimeout(() => this.showNext(), this.slideSpeed);
+    }
+
+    /**
+     * Starts the slideshow
+     */
+    start() {
+        this.showNext();
+    }
 }
 
-// Initialize slideshow when DOM is fully loaded
-document.addEventListener('DOMContentLoaded', () => {
-    showSlides();
-});
+// Initialize slideshow when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => new Slideshow());

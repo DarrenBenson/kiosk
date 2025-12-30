@@ -1,200 +1,236 @@
 <?php
+/**
+ * Bin Collection API
+ * Fetches and parses South Oxfordshire District Council iCal feed
+ * to determine next bin collection date and which bins are due
+ */
+define('KIOSK_APP', true);
+require_once __DIR__ . '/../config.php';
+
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 
-// Load configuration
-require_once __DIR__ . '/../config.php';
-
-define('BIN_UPRN', getConfig('BIN_UPRN', ''));
-define('CACHE_FILE', __DIR__ . '/../cache/bins_cache.json');
-define('CACHE_DURATION', 21600); // 6 hours in seconds
-define('BINZONE_URL', 'https://eform.southoxon.gov.uk/ebase/BINZONE_DESKTOP.eb');
+date_default_timezone_set(TIMEZONE);
 
 /**
- * Fetches bin collection data from South Oxfordshire's BinZone API
- * @return array|null Array of bin collections or null on failure
+ * Gets the configured calendar ID based on calendar type and collection day
+ * @return string Calendar ID or empty string if not configured
  */
-function fetchFromBinZone() {
-    if (empty(BIN_UPRN)) {
-        return null;
+function getCalendarId() {
+    $constName = 'BIN_CALENDAR_ID_' . strtoupper(BIN_CALENDAR_TYPE) . '_' . strtoupper(BIN_COLLECTION_DAY);
+    return defined($constName) ? constant($constName) : '';
+}
+
+/**
+ * Fetches iCal data from Google Calendar with caching
+ * @return string iCal data or empty string on failure
+ */
+function fetchIcalData() {
+    $calendarId = getCalendarId();
+
+    if (empty($calendarId)) {
+        return '';
     }
 
-    $cookie = 'SVBINZONE=SOUTH%3AUPRN%40' . urlencode(BIN_UPRN);
-    $url = BINZONE_URL . '?SOVA_TAG=SOUTH&ebd=0';
+    // Ensure cache directory exists
+    if (!is_dir(CACHE_DIR)) {
+        mkdir(CACHE_DIR, 0755, true);
+    }
 
-    $ch = curl_init($url);
-    curl_setopt_array($ch, [
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_TIMEOUT => 10,
-        CURLOPT_FOLLOWLOCATION => true,
-        CURLOPT_SSL_VERIFYPEER => true,
-        CURLOPT_SSL_VERIFYHOST => 2,
-        CURLOPT_COOKIE => $cookie,
-        CURLOPT_USERAGENT => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+    $cacheFile = CACHE_DIR . 'bins_ical_' . md5($calendarId) . '.ics';
+
+    // Check cache
+    if (file_exists($cacheFile) && (time() - filemtime($cacheFile)) < BIN_CACHE_DURATION) {
+        return file_get_contents($cacheFile);
+    }
+
+    // Construct iCal URL
+    $icalUrl = 'https://calendar.google.com/calendar/ical/' . urlencode($calendarId) . '/public/basic.ics';
+
+    $context = stream_context_create([
+        'http' => [
+            'timeout' => 15,
+            'user_agent' => 'Kiosk Display/1.0'
+        ]
     ]);
 
-    $response = curl_exec($ch);
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    $error = curl_error($ch);
-    curl_close($ch);
+    $icalData = @file_get_contents($icalUrl, false, $context);
 
-    if ($httpCode !== 200 || !$response) {
-        error_log("BinZone API error: HTTP $httpCode - $error");
-        return null;
+    if ($icalData !== false) {
+        file_put_contents($cacheFile, $icalData);
+        return $icalData;
     }
 
-    return parseHtmlResponse($response);
+    // Return stale cache if available
+    if (file_exists($cacheFile)) {
+        return file_get_contents($cacheFile);
+    }
+
+    return '';
 }
 
 /**
- * Parse HTML response from BinZone API
- * Extracts collection dates and bin types from div elements with class "binextra"
- * @param string $html HTML response from BinZone
- * @return array|null Array of collections or null if parsing fails
+ * Parses iCal data and extracts events with dates
+ * @param string $icalData Raw iCal content
+ * @return array Array of events with 'date' (Ymd) and 'summary' keys
  */
-function parseHtmlResponse($html) {
-    $collections = [];
+function parseIcal($icalData) {
+    $events = [];
+    $lines = explode("\n", str_replace("\r\n", "\n", $icalData));
 
-    // Use regex to find all divs with class="binextra"
-    preg_match_all('/<div[^>]*class="binextra"[^>]*>([^<]+)<\/div>/i', $html, $matches);
+    $currentEvent = null;
+    $inEvent = false;
 
-    if (empty($matches[1])) {
-        error_log("BinZone API: No binextra divs found in response");
-        return null;
-    }
+    foreach ($lines as $line) {
+        $line = trim($line);
 
-    foreach ($matches[1] as $content) {
-        $content = trim($content);
+        // Handle line continuations (lines starting with space)
+        if (!empty($line) && $line[0] === ' ' && $currentEvent !== null && isset($currentEvent['summary'])) {
+            $currentEvent['summary'] .= trim($line);
+            continue;
+        }
 
-        // Parse format: "DD Mon - BIN TYPE" or similar
-        if (preg_match('/^(\d{1,2}\s+\w+)\s*-\s*(.+)$/i', $content, $parsed)) {
-            $dateStr = trim($parsed[1]);
-            $binType = trim($parsed[2]);
-
-            // Convert relative date to timestamp (adds current year)
-            $year = date('Y');
-            $dateObj = DateTime::createFromFormat('j M Y', "$dateStr $year");
-
-            // If date has passed, assume next year
-            if ($dateObj && $dateObj < new DateTime()) {
-                $dateObj = DateTime::createFromFormat('j M Y', "$dateStr " . ($year + 1));
+        if ($line === 'BEGIN:VEVENT') {
+            $currentEvent = ['date' => null, 'summary' => '', 'isAllDay' => false];
+            $inEvent = true;
+        } elseif ($line === 'END:VEVENT' && $inEvent) {
+            // Only include all-day events (actual collection days, not reminder events)
+            if ($currentEvent['date'] !== null && !empty($currentEvent['summary']) && $currentEvent['isAllDay']) {
+                $events[] = $currentEvent;
             }
-
-            if ($dateObj) {
-                $collections[] = [
-                    'date' => $dateObj->format('D j M'),
-                    'timestamp' => $dateObj->getTimestamp(),
-                    'type' => $binType
-                ];
+            $currentEvent = null;
+            $inEvent = false;
+        } elseif ($inEvent && $currentEvent !== null) {
+            // Only capture all-day events (VALUE=DATE format, not timed reminder events)
+            if (strpos($line, 'DTSTART;VALUE=DATE:') === 0) {
+                $currentEvent['date'] = substr($line, 19, 8);
+                $currentEvent['isAllDay'] = true;
+            }
+            // Parse SUMMARY
+            elseif (strpos($line, 'SUMMARY:') === 0) {
+                $currentEvent['summary'] = substr($line, 8);
             }
         }
     }
 
-    // Sort by timestamp
-    usort($collections, fn($a, $b) => $a['timestamp'] - $b['timestamp']);
-
-    return empty($collections) ? null : $collections;
+    return $events;
 }
 
 /**
- * Get cached bin collection data
- * @return array|null Cached data or null if not available/expired
+ * Determines which bins are due based on event summary text
+ * @param string $summary Event summary text
+ * @return array Associative array of bin types and whether they're due
  */
-function getCachedData() {
-    if (!file_exists(CACHE_FILE)) {
-        return null;
-    }
+function parseBinsFromSummary($summary) {
+    $summary = strtolower($summary);
 
-    $cacheData = json_decode(file_get_contents(CACHE_FILE), true);
-    if (!$cacheData || !isset($cacheData['timestamp'])) {
-        return null;
-    }
-
-    // Check if cache is still valid
-    if (time() - $cacheData['timestamp'] > CACHE_DURATION) {
-        return null;
-    }
-
-    return $cacheData['data'];
-}
-
-/**
- * Save bin collection data to cache
- * @param array $data Data to cache
- */
-function cacheData($data) {
-    $cacheDir = dirname(CACHE_FILE);
-    if (!is_dir($cacheDir)) {
-        mkdir($cacheDir, 0755, true);
-    }
-
-    $cacheData = [
-        'timestamp' => time(),
-        'data' => $data
+    $bins = [
+        'green' => false,
+        'grey' => false,
+        'brown' => false
     ];
 
-    file_put_contents(CACHE_FILE, json_encode($cacheData));
-}
-
-/**
- * Get the next bin collection from a sorted list
- * @param array $collections Sorted array of collection dates
- * @return array Next collection or current if none in future
- */
-function getNextCollection($collections) {
-    $now = time();
-
-    foreach ($collections as $collection) {
-        if ($collection['timestamp'] >= $now) {
-            return $collection;
-        }
+    // Green bin (recycling)
+    if (strpos($summary, 'recycling') !== false || strpos($summary, 'green') !== false) {
+        $bins['green'] = true;
     }
 
-    // If no future collections, return the last one
-    return end($collections);
+    // Grey bin (general waste/rubbish)
+    if (strpos($summary, 'grey') !== false ||
+        strpos($summary, 'gray') !== false ||
+        strpos($summary, 'rubbish') !== false ||
+        strpos($summary, 'refuse') !== false) {
+        $bins['grey'] = true;
+    }
+
+    // Brown bin (garden and food waste)
+    if (strpos($summary, 'brown') !== false ||
+        strpos($summary, 'garden') !== false ||
+        strpos($summary, 'food') !== false ||
+        strpos($summary, 'organic') !== false) {
+        $bins['brown'] = true;
+    }
+
+    return $bins;
 }
 
 /**
- * Determines bin collection schedule
- * Uses cached data when available, fetches from BinZone when needed
- * Falls back to estimated schedule if API unavailable
- * @return array Bin collection data
+ * Gets the next bin collection information
+ * @return array Collection data including date, bins, and status
  */
 function getBinCollection() {
-    // Try to get cached data first
-    $cached = getCachedData();
-    if ($cached) {
-        return $cached;
+    $today = date('Ymd');
+    $todayDate = new DateTime();
+
+    $icalData = fetchIcalData();
+
+    if (empty($icalData)) {
+        return [
+            'error' => 'Unable to fetch bin collection calendar. Check config.php settings.',
+            'date' => date('D j M'),
+            'bins' => ['green' => false, 'grey' => false, 'brown' => false],
+            'nextCollection' => null,
+            'isToday' => false,
+            'daysUntil' => null
+        ];
     }
 
-    // Try to fetch from BinZone API
-    $collections = fetchFromBinZone();
-    if ($collections) {
-        $nextCollection = getNextCollection($collections);
-        cacheData($nextCollection);
-        return $nextCollection;
+    $events = parseIcal($icalData);
+
+    // Find the next upcoming collection (today or future)
+    $nextDate = null;
+    $nextBins = ['green' => false, 'grey' => false, 'brown' => false];
+
+    // Sort events by date
+    usort($events, function($a, $b) {
+        return strcmp($a['date'], $b['date']);
+    });
+
+    foreach ($events as $event) {
+        // Only consider events from today onwards
+        if ($event['date'] >= $today) {
+            if ($nextDate === null) {
+                $nextDate = $event['date'];
+            }
+
+            // Collect all bins for the next collection date
+            if ($event['date'] === $nextDate) {
+                $eventBins = parseBinsFromSummary($event['summary']);
+                foreach ($eventBins as $bin => $isDue) {
+                    if ($isDue) {
+                        $nextBins[$bin] = true;
+                    }
+                }
+            } else {
+                // We've moved past the next collection date
+                break;
+            }
+        }
     }
 
-    // Fallback to estimated schedule
-    error_log('Warning: Using estimated bin collection schedule. Configure BIN_UPRN in .env for accurate data.');
+    // Calculate days until collection
+    $daysUntil = null;
+    $isToday = false;
 
-    $currentWeek = date('W');
-    $isEvenWeek = $currentWeek % 2 === 0;
-
-    $today = new DateTime();
-    $daysUntilMonday = (8 - $today->format('N')) % 7;
-    if ($daysUntilMonday === 0 && $today->format('H') >= 6) {
-        $daysUntilMonday = 7;
+    if ($nextDate !== null) {
+        $collectionDate = DateTime::createFromFormat('Ymd', $nextDate);
+        $diff = $todayDate->diff($collectionDate);
+        $daysUntil = (int)$diff->format('%r%a');
+        $isToday = ($daysUntil === 0);
     }
 
-    $nextCollection = clone $today;
-    $nextCollection->modify("+{$daysUntilMonday} days");
+    // Format the date for display
+    $formattedDate = $nextDate
+        ? date('D j M', strtotime($nextDate))
+        : date('D j M');
 
     return [
-        'date' => $nextCollection->format('D j M'),
-        'estimated' => true,
-        'type' => $isEvenWeek ? 'GREEN BIN & GREY BIN' : 'GREEN BIN & GARDEN WASTE BIN'
+        'date' => $formattedDate,
+        'bins' => $nextBins,
+        'nextCollection' => $nextDate,
+        'isToday' => $isToday,
+        'daysUntil' => $daysUntil
     ];
 }
 
-echo json_encode(getBinCollection()); 
+echo json_encode(getBinCollection());

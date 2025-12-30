@@ -48,13 +48,14 @@
 	display: table-cell;
 	vertical-align: middle;
 	font-weight: bold;
+	text-transform: uppercase;
 }
 
 /* Container for scrolling content */
 .ticker-container ul {
 	list-style: none;
 	height: auto;
-	margin-left: 120px;
+	margin-left: 150px;
 	position: relative;
 	z-index: 1; /* Place list items below caption */
 }
@@ -108,12 +109,12 @@
 }
 
 .ticker-container ul {
-	margin-left: 120px; /* Margin for positioning */
+	margin-left: 150px; /* Align with caption width */
 	height: 100%; /* Full height */
 }
 
 .ticker-container ul div {
 	height: 100%; /* Full height for ticker items */
-	left: 120px; /* Position from the left */
+	left: 0; /* Position relative to margin */
 }
 

@@ -33,6 +33,14 @@
     font-weight: bold;
 }
 
+.finance-data .finance-label.price-up {
+    color: #4CAF50;
+}
+
+.finance-data .finance-label.price-down {
+    color: #f44336;
+}
+
 #datetime {
     margin-left: auto;
 }

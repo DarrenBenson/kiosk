@@ -16,8 +16,8 @@ Thumbs.db
 .vscode/
 .idea/
 
-# Environment variables (API keys)
-.env
+# Configuration (contains API keys)
+config.php
 
-# Cache files
+# Cache directory
 cache/

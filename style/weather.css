@@ -1,13 +1,14 @@
 .weather-container {
-    position: fixed; /* Fixed position for the container */
+    position: fixed;
     bottom: 20px;
-    left: 567px;
+    left: 50%;
     transform: translateX(-50%);
     background: rgba(0, 0, 0, 0.8);
-    border-radius: 10px;
+    border: 1px solid white;
+    border-radius: 15px;
     color: white;
-    padding: 8px;
-    width: 400px;
+    padding: 10px 12px;
+    width: clamp(320px, 40vw, 400px);
     height: 120px;
     z-index: 10;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -21,11 +22,11 @@
     padding-bottom: 6px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     margin-bottom: 6px;
-    height: 40px;
+    height: 36px;
 }
 
 .location {
-    font-size: 16px;
+    font-size: clamp(14px, 1.6vw, 16px);
     font-weight: bold;
 }
 
@@ -36,7 +37,7 @@
 }
 
 .temp-now .temp {
-    font-size: 20px;
+    font-size: clamp(18px, 2vw, 20px);
     font-weight: bold;
 }
 
@@ -44,50 +45,50 @@
     display: flex;
     justify-content: space-between;
     text-align: center;
-    height: 60px;
+    height: 54px;
 }
 
 .forecast-hour {
     flex: 1;
-    padding: 4px;
+    padding: clamp(2px, 0.4vw, 4px);
 }
 
 .forecast-hour .time {
-    font-size: 11px;
+    font-size: clamp(9px, 1.1vw, 11px);
     margin-bottom: 2px;
 }
 
 img.weather-icon {
-    width: 32px;
-    height: 32px;
+    width: clamp(28px, 3.2vw, 32px);
+    height: clamp(28px, 3.2vw, 32px);
 }
 
 .weather-icon.small {
-    width: 20px;
-    height: 20px;
+    width: clamp(16px, 2vw, 20px);
+    height: clamp(16px, 2vw, 20px);
 }
 
 .forecast-hour .temp {
-    font-size: 12px;
+    font-size: clamp(10px, 1.2vw, 12px);
     font-weight: bold;
     margin-top: 2px;
 }
 
 .sun-times {
     display: flex;
-    gap: 8px;
+    gap: clamp(6px, 0.8vw, 8px);
 }
 
 .sunrise, .sunset {
     display: flex;
     align-items: center;
     gap: 2px;
-    font-size: 11px;
+    font-size: clamp(9px, 1.1vw, 11px);
 }
 
 img.sun-icon {
-    width: 32px;
-    height: 32px;
+    width: clamp(28px, 3.2vw, 32px);
+    height: clamp(28px, 3.2vw, 32px);
 }
 
 .weather-info {
@@ -97,7 +98,7 @@ img.sun-icon {
 }
 
 .description {
-    font-size: 11px;
+    font-size: clamp(9px, 1.1vw, 11px);
     color: #ccc;
 }
 
@@ -108,6 +109,32 @@ img.sun-icon {
 }
 
 .feels-like {
-    font-size: 11px;
+    font-size: clamp(9px, 1.1vw, 11px);
     color: #ccc;
-} 
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 768px) {
+    .weather-container {
+        width: 90%;
+        max-width: 350px;
+        bottom: 10px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .weather-container {
+        width: 95%;
+        padding: 5px;
+    }
+
+    .hourly-forecast {
+        flex-wrap: wrap;
+        justify-content: center;
+        height: auto;
+    }
+
+    .forecast-hour {
+        flex: 0 0 25%;
+    }
+}

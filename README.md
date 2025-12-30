@@ -1,85 +1,113 @@
-# 🎮 Game Over Bar Kiosk Display
+# Kiosk Display
 
-A dynamic kiosk display system that keeps your patrons entertained and informed with the latest BBC news while showcasing your venue's awesome moments!
+Digital signage system for Game Over Bar showing news, weather, stocks, bin collection, and slideshow.
 
-## 🌟 Features
+## Features
 
-- **Live BBC News Ticker** - Keep your customers up to date with the latest headlines
-- **Smooth Image Slideshow** - Show off your venue's best moments in style
-- **Zero-interaction Required** - Set it and forget it! Perfect for public displays
-- **Lightweight & Fast** - No heavy frameworks, just pure JavaScript goodness
+- BBC news ticker with scrolling headlines
+- Weather forecast with 8-hour hourly display
+- Stock prices and currency rates (Alpaca Markets)
+- Bin collection schedule (South Oxfordshire Council)
+- Auto-cycling image slideshow
 
-## 🎯 Perfect For
+## Quick Start
 
-- Bar/Pub Digital Displays
-- Gaming Venue Information Screens
-- Event Space Announcements
-- Anywhere you want to combine news and images!
+```bash
+# 1. Copy config template
+cp config.example.php config.php
 
-## 🛠️ Setup
+# 2. Add your API keys to config.php
+# - OpenWeatherMap API key
+# - Alpaca Markets credentials
+# - Bin calendar ID from South Oxon Council
 
-1. Clone this repository
-2. Add your images to `content/4x3/` directory
-3. Point your browser to index.php
-4. Enjoy your professional-looking display!
+# 3. Ensure cache directory exists
+mkdir -p cache
 
-## 📁 Directory Structure
-
-```
-├── content/
-│   └── 4x3/          # Add your slideshow images here
-├── images/           # Logo images
-├── scripts/
-│   ├── slideshow.js  # Handles image transitions
-│   └── ticker.js     # Manages news ticker
-├── style/
-│   ├── slideshow.css
-│   └── ticker.css
-└── index.php         # Main display file
+# 4. Point web server to project root
 ```
 
-## ⚙️ Customization
+## Structure
 
-### Slideshow Timing
+```
+kiosk/
+├── .claude/
+│   ├── commands/        # Slash commands
+│   └── skills/          # Skills with scripts
+├── api/                 # Backend APIs
+│   ├── bins.php         # Bin collection data
+│   ├── stocks.php       # Stock quotes
+│   └── weather.php      # Weather forecast
+├── scripts/             # JavaScript modules
+├── style/               # CSS files
+├── content/4x3/         # Slideshow images
+├── images/              # UI assets
+├── cache/               # API cache (git-ignored)
+├── config.php           # Configuration (git-ignored)
+└── index.php            # Main application
+```
+
+## Deployment
+
+```bash
+# Test deployment
+.claude/skills/deploy-skill/scripts/deploy.sh -g -a
+
+# Production with backup
+.claude/skills/deploy-skill/scripts/deploy.sh -b -a
+```
+
+**Server:** webserver1 via jumpbox
+**URL:** https://kiosk.deskpoint.com
+
+## Configuration
+
+Edit `config.php`:
+
+| Setting | Description |
+|---------|-------------|
+| `WEATHER_API_KEY` | OpenWeatherMap API key |
+| `WEATHER_LAT/LON` | Location coordinates |
+| `ALPACA_API_KEY` | Alpaca Markets key |
+| `ALPACA_API_SECRET` | Alpaca Markets secret |
+| `BIN_CALENDAR_TYPE` | S1 or S2 schedule |
+| `BIN_COLLECTION_DAY` | Collection day |
+| `BIN_CALENDAR_ID_*` | Google Calendar ID |
+
+## Requirements
+
+- PHP 7.4+
+- Web server (nginx/Apache)
+- Internet connection for external APIs
+
+## Customisation
+
+### Slideshow timing
 
 ```javascript
-// in scripts/slideshow.js
-const slideSpeed = 10000; // Adjust slide duration (in milliseconds)
+// scripts/slideshow.js
+this.interval = 10000; // milliseconds between slides
 ```
 
-### News Ticker Speed
+### Refresh intervals
 
 ```javascript
-// in scripts/ticker.js
-const scrollSpeed = 15000; // Adjust scroll speed (in milliseconds)
-const showSpeed = 250;     // Adjust transition speed
+// scripts/weather.js
+setInterval(() => this.fetch(), 300000);  // 5 minutes
+
+// scripts/bins.js
+setInterval(() => this.fetch(), 3600000); // 1 hour
 ```
 
-## 📝 Requirements
+## Troubleshooting
 
-- PHP-enabled web server
-- Modern web browser
-- Internet connection (for BBC news feed)
+| Issue | Solution |
+|-------|----------|
+| No images | Add images to `content/4x3/` |
+| Weather empty | Check `WEATHER_API_KEY` in config |
+| Bins not loading | Verify calendar ID and schedule type |
+| Cache errors | Ensure `cache/` is writable (chmod 777) |
 
-## 🎨 Styling
+## Licence
 
-Want to change the look? The display is easily customizable through the CSS files in the `style/` directory.
-
-## 🐛 Troubleshooting
-
-- **No images showing?** Make sure your images are in the `content/4x3/` directory
-- **News ticker empty?** Check your internet connection and BBC feed access
-- **Transitions janky?** Try adjusting the timing constants in the JavaScript files
-
-## 📜 License
-
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
-
-## 🎉 Credits
-
-- News feed content provided by BBC
-- Built with ❤️ for the Game Over Bar
-
-## 🤝 Contributing
-
-Found a bug? Want to add a feature? Pull requests are welcome!
+MIT - see [LICENSE.md](LICENSE.md)
