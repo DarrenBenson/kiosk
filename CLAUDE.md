@@ -37,28 +37,43 @@ Run `/kiosk-help` for full command list.
 
 ```
 kiosk/
+├── public/                      # WEB ROOT (Apache DocumentRoot)
+│   ├── index.php                # Main application
+│   ├── favicon.ico
+│   ├── api/                     # Backend PHP APIs
+│   │   ├── bins.php             # South Oxon council bin collection
+│   │   ├── stocks.php           # Alpaca Markets stock quotes
+│   │   └── weather.php          # OpenWeatherMap forecast
+│   ├── scripts/                 # JavaScript modules
+│   ├── style/                   # CSS files
+│   ├── images/                  # UI assets
+│   └── content/4x3/             # Slideshow images
+├── config/                      # NOT web accessible
+│   ├── config.php               # Main config loader
+│   ├── config.example.php       # Template for users
+│   └── config.local.php         # Local overrides (gitignored)
+├── cache/                       # API response cache (gitignored)
+├── tools/                       # Maintenance scripts
+│   ├── fetch_binzone.py
+│   ├── update_bins_cache.php
+│   └── update_bins_cache.py
+├── docs/                        # Documentation
 ├── .claude/
-│   ├── commands/        # Slash commands
+│   ├── commands/                # Slash commands
 │   └── skills/
 │       └── deploy-skill/scripts/deploy.sh
-├── api/                 # Backend PHP APIs
-│   ├── bins.php         # South Oxon council bin collection
-│   ├── stocks.php       # Alpaca Markets stock quotes
-│   └── weather.php      # OpenWeatherMap forecast
-├── scripts/             # JavaScript modules
-├── style/               # CSS files
-├── content/4x3/         # Slideshow images
-├── cache/               # API response cache (git-ignored)
-├── config.php           # Configuration (git-ignored)
-└── index.php            # Main application
+├── Dockerfile
+├── compose.yaml
+├── phpstan.neon
+└── README.md
 ```
 
 ## Deployment
 
 ```bash
-.claude/skills/deploy-skill/scripts/deploy.sh api/bins.php     # Single file
-.claude/skills/deploy-skill/scripts/deploy.sh -g -a            # Test with GUID
-.claude/skills/deploy-skill/scripts/deploy.sh -b -a            # Backup + production
+.claude/skills/deploy-skill/scripts/deploy.sh public/api/bins.php  # Single file
+.claude/skills/deploy-skill/scripts/deploy.sh -g -a                # Test with GUID
+.claude/skills/deploy-skill/scripts/deploy.sh -b -a                # Backup + production
 ```
 
 **Server:** webserver1 via jumpbox
@@ -67,7 +82,12 @@ kiosk/
 
 ## Configuration
 
-`config.php` contains:
+`config/config.php` loads:
+1. `config/config.local.php` if exists (for hardcoded values)
+2. Environment variables (for Docker)
+3. Default values
+
+Contains:
 - **Weather:** OpenWeatherMap API key, Didcot coordinates
 - **Stocks:** Alpaca Markets API credentials
 - **Bin Collection:** S2 Friday schedule, Google Calendar ID
@@ -75,19 +95,19 @@ kiosk/
 
 ## Architecture
 
-### JavaScript Modules (scripts/)
+### JavaScript Modules (public/scripts/)
 - **Slideshow** (class) - Image cycling
 - **NewsTicker** (class) - Scrolling news
 - **Weather** (object) - 5-minute refresh
 - **Finance** (object) - Stocks and currency rates
 - **BinCollection** (object) - Hourly refresh
 
-### APIs (api/)
+### APIs (public/api/)
 All endpoints require `KIOSK_APP` constant, return JSON.
 
 ## Code Standards
 
-- **PHP:** Use `require_once __DIR__ . '/../config.php'` for config
+- **PHP:** Use `require_once __DIR__ . '/../../config/config.php'` for API files
 - **JavaScript:** Object literal or class pattern with `init()` method
 - **CSS:** Use `clamp()` for responsive sizing
 - No build step - vanilla JS only

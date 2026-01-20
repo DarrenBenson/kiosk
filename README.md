@@ -64,16 +64,16 @@ git clone https://github.com/DarrenBenson/kiosk.git
 cd kiosk
 
 # Create your configuration
-cp config.example.php config.local.php
+cp config/config.example.php config/config.local.php
 
-# Edit config.local.php with your API keys
-nano config.local.php
+# Edit config/config.local.php with your API keys
+nano config/config.local.php
 
 # Create cache directory
 mkdir -p cache && chmod 755 cache
 
-# Start PHP development server
-php -S localhost:8080
+# Start PHP development server (serve from public/ directory)
+php -S localhost:8080 -t public
 ```
 
 ### Option 3: Build from source
@@ -94,13 +94,13 @@ docker run -d -p 8080:80 \
 
 ### Option 4: Production deployment
 
-See [SETUP.md](SETUP.md) for nginx/Apache configuration.
+See [docs/SETUP.md](docs/SETUP.md) for nginx/Apache configuration.
 
 ## Configuration
 
 Kiosk uses a layered configuration system:
 
-1. `config.local.php` - Your local settings (gitignored)
+1. `config/config.local.php` - Your local settings (gitignored)
 2. Environment variables - For Docker deployments
 3. Default values - Sensible fallbacks
 
@@ -149,33 +149,40 @@ Currency rates (USD, EUR, BTC) always display as they use free APIs.
 
 ```
 kiosk/
-├── api/                     # Backend PHP APIs
-│   ├── bins.php             # Bin collection data
-│   ├── stocks.php           # Stock quotes
-│   └── weather.php          # Weather forecast
-├── scripts/                 # JavaScript modules
-│   ├── slideshow.js         # Image carousel
-│   ├── ticker.js            # News ticker
-│   ├── weather.js           # Weather widget
-│   └── finance.js           # Stocks and currency
-├── style/                   # CSS files
-├── content/4x3/             # Slideshow images (add yours here)
-├── images/                  # UI assets
-├── cache/                   # API response cache (gitignored)
-├── config.php               # Main config loader
-├── config.local.php         # Your settings (gitignored)
-├── config.example.php       # Template for config.local.php
-└── index.php                # Main application
+├── public/                      # WEB ROOT (Apache DocumentRoot)
+│   ├── index.php                # Main application
+│   ├── favicon.ico
+│   ├── api/                     # Backend PHP APIs
+│   │   ├── bins.php             # Bin collection data
+│   │   ├── stocks.php           # Stock quotes
+│   │   └── weather.php          # Weather forecast
+│   ├── scripts/                 # JavaScript modules
+│   ├── style/                   # CSS files
+│   ├── images/                  # UI assets
+│   └── content/4x3/             # Slideshow images (add yours here)
+├── config/                      # NOT web accessible
+│   ├── config.php               # Main config loader
+│   ├── config.example.php       # Template for config.local.php
+│   └── config.local.php         # Your settings (gitignored)
+├── cache/                       # API response cache (gitignored)
+├── tools/                       # Maintenance scripts
+│   ├── fetch_binzone.py
+│   ├── update_bins_cache.php
+│   └── update_bins_cache.py
+├── docs/                        # Documentation
+├── Dockerfile
+├── compose.yaml
+└── README.md
 ```
 
 ## Customisation
 
 ### Adding slideshow images
 
-Add images to `content/4x3/`. Supported formats: JPG, PNG, WebP, GIF.
+Add images to `public/content/4x3/`. Supported formats: JPG, PNG, WebP, GIF.
 
 ```bash
-cp your-image.jpg content/4x3/slide01.jpg
+cp your-image.jpg public/content/4x3/slide01.jpg
 ```
 
 Images are displayed in alphabetical order.
@@ -190,7 +197,7 @@ define('NEWS_RSS_URL', 'https://feeds.bbci.co.uk/news/technology/rss.xml');
 
 ### Adjusting refresh intervals
 
-Edit the JavaScript files in `scripts/`:
+Edit the JavaScript files in `public/scripts/`:
 
 ```javascript
 // Weather: refresh every 5 minutes
@@ -216,7 +223,7 @@ For reliable bin data, set up a daily cron job:
 
 ```bash
 # Add to crontab
-0 6 * * * cd /path/to/kiosk && python3 api/update_bins_cache.py
+0 6 * * * cd /path/to/kiosk && python3 tools/update_bins_cache.py
 ```
 
 This fetches bin data once daily rather than on every page load.
@@ -225,11 +232,11 @@ This fetches bin data once daily rather than on every page load.
 
 | Issue | Solution |
 |-------|----------|
-| Blank page | Check PHP error log, ensure config.local.php exists |
+| Blank page | Check PHP error log, ensure config/config.local.php exists |
 | No weather | Verify `WEATHER_API_KEY` is set correctly |
 | No stocks | Check `ALPACA_API_KEY` and `ALPACA_API_SECRET` |
 | No bins | Verify `BIN_UPRN` and check cache directory permissions |
-| No images | Add images to `content/4x3/` directory |
+| No images | Add images to `public/content/4x3/` directory |
 | Cache errors | Run `chmod 755 cache` to fix permissions |
 
 ### Checking API endpoints
@@ -258,11 +265,11 @@ docker run --rm -v $(pwd):/app ghcr.io/phpstan/phpstan analyse -c phpstan.neon
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+See [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) for guidelines.
 
 ## Security
 
-See [SECURITY.md](SECURITY.md) for vulnerability reporting.
+See [docs/SECURITY.md](docs/SECURITY.md) for vulnerability reporting.
 
 ## Licence
 

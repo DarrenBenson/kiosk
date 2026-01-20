@@ -7,13 +7,15 @@ RUN docker-php-ext-install opcache
 RUN a2enmod rewrite
 
 # Set working directory
-WORKDIR /var/www/html
+WORKDIR /var/www
 
-# Copy application files
-COPY --chown=www-data:www-data . .
+# Copy application structure
+COPY --chown=www-data:www-data public/ /var/www/html/
+COPY --chown=www-data:www-data config/config.php /var/www/config/
+COPY --chown=www-data:www-data config/config.example.php /var/www/config/
 
 # Create cache directory
-RUN mkdir -p cache && chown www-data:www-data cache
+RUN mkdir -p /var/www/cache && chown www-data:www-data /var/www/cache
 
 # Expose port 80
 EXPOSE 80

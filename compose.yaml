@@ -63,7 +63,7 @@ services:
       - TIMEZONE=Europe/London
 
     volumes:
-      - kiosk-cache:/var/www/html/cache
+      - kiosk-cache:/var/www/cache
       # Uncomment to use custom slideshow images:
       # - ./slides:/var/www/html/content/4x3
 

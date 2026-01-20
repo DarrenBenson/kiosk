@@ -67,7 +67,7 @@ define('BIN_COUNCIL', 'SOUTH');                 // SOUTH or VALE
 // APPLICATION SETTINGS
 // =============================================================================
 define('TIMEZONE', 'Europe/London');
-define('CACHE_DIR', __DIR__ . '/cache/');
+define('CACHE_DIR', __DIR__ . '/../cache/');
 define('BIN_CACHE_DURATION', 86400);            // 24 hours in seconds
 define('WEATHER_CACHE_DURATION', 300);          // 5 minutes in seconds
 define('EXCHANGE_CACHE_DURATION', 3600);        // 1 hour in seconds

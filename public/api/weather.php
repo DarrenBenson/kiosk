@@ -6,7 +6,7 @@ declare(strict_types=1);
  * Fetches current weather and hourly forecast from OpenWeatherMap
  */
 define('KIOSK_APP', true);
-require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/../../config/config.php';
 
 header('Content-Type: application/json');
 

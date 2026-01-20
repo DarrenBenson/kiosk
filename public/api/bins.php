@@ -6,7 +6,7 @@ declare(strict_types=1);
  * Fetches bin collection data from South Oxfordshire / Vale of White Horse Binzone service
  */
 define('KIOSK_APP', true);
-require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/../../config/config.php';
 
 header('Content-Type: application/json');
 
@@ -151,7 +151,7 @@ function fetchBinzoneApi(string $uprn, string $council): ?array {
 
     // Fallback to Python helper for local development
     if ($html === null) {
-        $scriptPath = __DIR__ . '/fetch_binzone.py';
+        $scriptPath = __DIR__ . '/../../tools/fetch_binzone.py';
         if (file_exists($scriptPath)) {
             $cmd = sprintf(
                 'python3 %s %s %s 2>/dev/null',

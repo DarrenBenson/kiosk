@@ -19,7 +19,7 @@ def get_config():
 
     # Try to read from PHP config if env vars not set
     if not uprn:
-        config_path = Path(__file__).parent.parent / 'config.local.php'
+        config_path = Path(__file__).parent.parent / 'config' / 'config.local.php'
         if config_path.exists():
             content = config_path.read_text()
             uprn_match = re.search(r"define\s*\(\s*'BIN_UPRN'\s*,\s*'([^']+)'", content)

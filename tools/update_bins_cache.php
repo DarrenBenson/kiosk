@@ -13,7 +13,7 @@ function getConfig() {
 
     // Try to read from PHP config if env vars not set
     if (empty($uprn)) {
-        $configPath = dirname(__DIR__) . '/config.local.php';
+        $configPath = dirname(__DIR__) . '/config/config.local.php';
         if (file_exists($configPath)) {
             $content = file_get_contents($configPath);
             if (preg_match("/define\s*\(\s*'BIN_UPRN'\s*,\s*'([^']+)'/", $content, $match)) {

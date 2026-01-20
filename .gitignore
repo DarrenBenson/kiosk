@@ -21,7 +21,7 @@ Thumbs.db
 .mcp.json
 
 # Local config override (for standalone deployments with hardcoded keys)
-config.local.php
+config/config.local.php
 
 # Docker environment file
 .env

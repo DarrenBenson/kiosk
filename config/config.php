@@ -70,7 +70,7 @@ define('BIN_COUNCIL', getenv('BIN_COUNCIL') ?: 'SOUTH');
 // APPLICATION SETTINGS
 // =============================================================================
 define('TIMEZONE', getenv('TIMEZONE') ?: 'Europe/London');
-define('CACHE_DIR', __DIR__ . '/cache/');
+define('CACHE_DIR', __DIR__ . '/../cache/');
 define('BIN_CACHE_DURATION', 86400);    // 24 hours
 define('WEATHER_CACHE_DURATION', 300);  // 5 minutes
 define('EXCHANGE_CACHE_DURATION', 3600); // 1 hour

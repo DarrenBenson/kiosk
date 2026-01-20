@@ -4,11 +4,11 @@ declare(strict_types=1);
 define('KIOSK_APP', true);
 
 // Check for config file
-if (!file_exists(__DIR__ . '/config.php')) {
-    die('Configuration file not found. Please copy config.example.php to config.local.php and configure your settings.');
+if (!file_exists(__DIR__ . '/../config/config.php')) {
+    die('Configuration file not found. Please copy config/config.example.php to config/config.local.php and configure your settings.');
 }
 
-require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/../config/config.php';
 date_default_timezone_set(defined('TIMEZONE') ? TIMEZONE : 'Europe/London');
 
 /**
