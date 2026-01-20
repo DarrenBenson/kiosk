@@ -59,20 +59,19 @@ The compose file includes all configuration options with descriptions. At minimu
 ### Option 2: Standalone PHP
 
 ```bash
-# Clone the repository
-git clone https://github.com/DarrenBenson/kiosk.git
-cd kiosk
+# Download the application files
+mkdir kiosk && cd kiosk
+curl -L https://github.com/DarrenBenson/kiosk/archive/refs/heads/main.tar.gz | \
+  tar -xz --strip-components=1 --wildcards '*/public' '*/config'
 
 # Create your configuration
 cp config/config.example.php config/config.local.php
-
-# Edit config/config.local.php with your API keys
 nano config/config.local.php
 
 # Create cache directory
 mkdir -p cache && chmod 755 cache
 
-# Start PHP development server (serve from public/ directory)
+# Start PHP development server
 php -S localhost:8080 -t public
 ```
 
