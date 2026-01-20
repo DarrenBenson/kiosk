@@ -16,8 +16,8 @@ Thumbs.db
 .vscode/
 .idea/
 
-# Configuration (contains API keys)
-config.php
+# Local config override (for standalone deployments with hardcoded keys)
+config.local.php
 
 # Cache directory
 cache/

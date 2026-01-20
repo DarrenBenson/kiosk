@@ -1,9 +1,13 @@
 <?php
+declare(strict_types=1);
+
 /**
  * Kiosk Display Configuration
  *
- * Copy this file to config.php and fill in your API keys and settings.
- * config.php is excluded from git to protect your credentials.
+ * Copy this file to config.local.php and fill in your settings.
+ * config.local.php is excluded from git to protect your credentials.
+ *
+ * For Docker deployments, you can also set environment variables instead.
  */
 
 // Prevent direct access
@@ -12,13 +16,28 @@ if (!defined('KIOSK_APP')) {
 }
 
 // =============================================================================
+// BRANDING
+// =============================================================================
+define('SITE_TITLE', 'My Kiosk Display');       // Page title
+define('LOGO_LEFT', '');                         // Path to left logo (optional, e.g. 'images/logo.png')
+define('LOGO_RIGHT', '');                        // Path to right logo (optional)
+define('NEWS_RSS_URL', 'https://feeds.bbci.co.uk/news/uk/rss.xml');
+
+// =============================================================================
+// DISPLAY SETTINGS
+// =============================================================================
+define('DISPLAY_CURRENCY', 'GBP');              // GBP, USD, or EUR
+define('LOCALE', 'en-GB');                      // For date/number formatting
+define('BINS_ENABLED', true);                   // Auto-disabled if BIN_UPRN is empty
+
+// =============================================================================
 // WEATHER API (OpenWeatherMap)
 // Get your free API key at: https://openweathermap.org/api
 // =============================================================================
 define('WEATHER_API_KEY', '');
-define('WEATHER_LAT', '51.6095');  // Didcot latitude
-define('WEATHER_LON', '-1.2401');  // Didcot longitude
-define('WEATHER_LOCATION', 'Didcot, UK');
+define('WEATHER_LAT', '51.5074');               // Your latitude (default: London)
+define('WEATHER_LON', '-0.1278');               // Your longitude (default: London)
+define('WEATHER_LOCATION', 'London, UK');       // Display name for location
 
 // =============================================================================
 // STOCK API (Alpaca Markets)
@@ -26,42 +45,29 @@ define('WEATHER_LOCATION', 'Didcot, UK');
 // =============================================================================
 define('ALPACA_API_KEY', '');
 define('ALPACA_API_SECRET', '');
-define('DEFAULT_STOCK_SYMBOLS', 'AAPL,GOOGL,MSFT,TSLA,META,NOW,NVDA');
-define('DEFAULT_CURRENCY', 'GBP');
+define('DEFAULT_STOCK_SYMBOLS', 'AAPL,GOOGL,MSFT,TSLA,META,NVDA,AMD');
+define('DEFAULT_CURRENCY', 'GBP');              // Currency to convert stock prices to
+
+// UK Stocks (Alpha Vantage) - Optional
+// Get your API key at: https://www.alphavantage.co/support/#api-key
+define('ALPHA_VANTAGE_API_KEY', '');
+define('UK_STOCK_SYMBOLS', '');                 // e.g. 'INCH.LON' for InchCape
 
 // =============================================================================
-// BIN COLLECTION (South Oxfordshire District Council)
+// BIN COLLECTION (South Oxfordshire / Vale of White Horse)
+// UK only - uses the Binzone service
 //
-// 1. Find your calendar type (S1 or S2) and collection day at:
-//    https://www.southoxon.gov.uk/south-oxfordshire-district-council/recycling-rubbish-and-waste/when-is-your-collection-day/
-//
-// 2. Get calendar IDs from:
-//    https://www.southoxon.gov.uk/south-oxfordshire-district-council/recycling-rubbish-and-waste/when-is-your-collection-day/waste-collections-calendar/add-your-waste-calendar-to-google-calendar-or-ical/
-//
-// The calendar ID is the part before @group.calendar.google.com in the iCal URL
+// Find your UPRN (Unique Property Reference Number) at:
+// https://www.findmyaddress.co.uk/
 // =============================================================================
-define('BIN_CALENDAR_TYPE', 'S2');  // S1 or S2
-define('BIN_COLLECTION_DAY', 'Friday');  // Monday, Tuesday, Wednesday, Thursday, or Friday
-
-// Calendar IDs for S1 schedule (fill in the one matching your collection day)
-define('BIN_CALENDAR_ID_S1_MONDAY', 'qfnbte8aomgagtu3svvpkov00k@group.calendar.google.com');
-define('BIN_CALENDAR_ID_S1_TUESDAY', '');
-define('BIN_CALENDAR_ID_S1_WEDNESDAY', '');
-define('BIN_CALENDAR_ID_S1_THURSDAY', '');
-define('BIN_CALENDAR_ID_S1_FRIDAY', '');
-
-// Calendar IDs for S2 schedule (fill in the one matching your collection day)
-define('BIN_CALENDAR_ID_S2_MONDAY', '');
-define('BIN_CALENDAR_ID_S2_TUESDAY', '');
-define('BIN_CALENDAR_ID_S2_WEDNESDAY', '');
-define('BIN_CALENDAR_ID_S2_THURSDAY', '');
-define('BIN_CALENDAR_ID_S2_FRIDAY', '');
+define('BIN_UPRN', '');                         // Your 11-12 digit UPRN
+define('BIN_COUNCIL', 'SOUTH');                 // SOUTH or VALE
 
 // =============================================================================
 // APPLICATION SETTINGS
 // =============================================================================
 define('TIMEZONE', 'Europe/London');
 define('CACHE_DIR', __DIR__ . '/cache/');
-define('BIN_CACHE_DURATION', 86400);    // 24 hours in seconds
-define('WEATHER_CACHE_DURATION', 300);  // 5 minutes in seconds
-define('EXCHANGE_CACHE_DURATION', 3600); // 1 hour in seconds
+define('BIN_CACHE_DURATION', 86400);            // 24 hours in seconds
+define('WEATHER_CACHE_DURATION', 300);          // 5 minutes in seconds
+define('EXCHANGE_CACHE_DURATION', 3600);        // 1 hour in seconds

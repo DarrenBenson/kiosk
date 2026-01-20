@@ -1,0 +1,18 @@
+parameters:
+    level: 5
+    paths:
+        - index.php
+        - api/bins.php
+        - api/stocks.php
+        - api/weather.php
+    excludePaths:
+        - api/update_bins_cache.php  # Standalone script with its own config handling
+    bootstrapFiles:
+        - phpstan-bootstrap.php
+    treatPhpDocTypesAsCertain: false
+    ignoreErrors:
+        # Environment-specific checks (API keys may or may not be set)
+        - '#Expression in empty\(\) is always falsy#'
+        - '#Expression in empty\(\) is not falsy#'
+        - '#Result of \|\| is always true#'
+        - '#Unreachable statement - code above always terminates#'

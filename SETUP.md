@@ -4,13 +4,13 @@ This guide will help you configure your kiosk display with all the necessary API
 
 ## Quick Start
 
-1. Copy the example environment file:
+1. Copy the example config file:
    ```bash
-   cp .env.example .env
+   cp config.example.php config.php
    ```
 
-2. Edit `.env` and add your API keys and configuration
-3. Restart your Docker container for changes to take effect
+2. Edit `config.php` and add your API keys and settings
+3. Deploy to your server or restart your Docker container
 
 ## API Keys Setup
 
@@ -23,7 +23,7 @@ This guide will help you configure your kiosk display with all the necessary API
 2. Click "Sign Up" and create a free account
 3. Go to "API keys" section
 4. Copy your API key
-5. Add to `.env`: `WEATHER_API_KEY=your_key_here`
+5. Add to `config.php`: `define('WEATHER_API_KEY', 'your_key_here');`
 
 **Free tier limits:** 1,000 calls/day (more than enough for the kiosk)
 
@@ -37,10 +37,10 @@ This guide will help you configure your kiosk display with all the necessary API
 3. Choose "Paper Trading" (not live trading)
 4. Go to your dashboard and generate API keys
 5. Copy both the API Key and API Secret
-6. Add to `.env`:
-   ```
-   ALPACA_API_KEY=your_key_here
-   ALPACA_API_SECRET=your_secret_here
+6. Add to `config.php`:
+   ```php
+   define('ALPACA_API_KEY', 'your_key_here');
+   define('ALPACA_API_SECRET', 'your_secret_here');
    ```
 
 **Free tier:** Unlimited API calls for market data
@@ -49,28 +49,31 @@ This guide will help you configure your kiosk display with all the necessary API
 
 **Purpose:** Shows accurate bin collection dates for your address
 
-**Your Address:** 29 Juniper Way, Didcot, OX11 6AA
+**Supported councils:** South Oxfordshire and Vale of White Horse District Councils
 
 **How to find your UPRN:**
 
-**Option 1: FindMyAddress.co.uk**
+**Option 1: FindMyAddress.co.uk** (Recommended)
 1. Visit [https://www.findmyaddress.co.uk/search](https://www.findmyaddress.co.uk/search)
-2. Enter your full address: "29 Juniper Way, Didcot, OX11 6AA"
-3. Look for the UPRN (Unique Property Reference Number)
-4. Add to `.env`: `BIN_UPRN=your_uprn_here`
+2. Enter your full address
+3. Look for the UPRN (Unique Property Reference Number) - an 11-12 digit number
+4. Add to `config.php`:
+   ```php
+   define('BIN_UPRN', 'your_uprn_here');
+   define('BIN_COUNCIL', 'SOUTH');  // or 'VALE' for Vale of White Horse
+   ```
 
 **Option 2: Council's Binzone Service**
-1. Visit [Vale of White Horse Binzone](https://www.whitehorsedc.gov.uk/vale-of-white-horse-district-council/recycling-rubbish-and-waste/binzone/)
-2. Enter your postcode: OX11 6AA
-3. Select your address
-4. Check the browser's network tab (F12 → Network) to see the UPRN in the request
+1. Visit your council's Binzone page
+2. Enter your postcode and select your address
+3. Open browser DevTools (F12 → Network tab)
+4. Look for requests containing your UPRN
 
 **Option 3: Contact the Council**
 - Email: waste.team@southandvale.gov.uk
 - Phone: 01235 422 422
-- Ask for the UPRN for 29 Juniper Way, Didcot, OX11 6AA
 
-**Note:** Without the UPRN, the system will estimate bin collection dates based on the typical Vale of White Horse schedule (alternating weeks, Monday collections). This is less accurate than using the UPRN.
+**Note:** The bin collection feature requires Python 3 with the `requests` library installed on the server.
 
 ## Update Frequencies
 
@@ -85,26 +88,26 @@ Once configured, the display will automatically update:
 
 ## Verifying Setup
 
-After adding your API keys to `.env`:
+After configuring `config.php`:
 
-1. Restart the Docker container:
+1. Deploy to your server or restart Docker:
    ```bash
    docker restart kiosk
    ```
 
-2. Check the live site: [https://kiosk.deskpoint.com/](https://kiosk.deskpoint.com/)
+2. Open your kiosk URL in a browser
 
 3. Open browser console (F12) to check for any errors
 
 4. Verify that:
    - Temperature shows actual values (not --)
    - Stock prices show GBP values
-   - Bin date shows next collection (may have ~ prefix if UPRN not configured)
+   - Bin date shows next collection date
 
 ## Troubleshooting
 
 ### Weather not loading
-- Check that `WEATHER_API_KEY` is correctly set in `.env`
+- Check that `WEATHER_API_KEY` is correctly set in `config.php`
 - Verify the API key is active (may take a few minutes after creation)
 - Check for errors in browser console
 
@@ -113,16 +116,17 @@ After adding your API keys to `.env`:
 - Verify you created "Paper Trading" keys, not live trading
 - Markets may be closed (US market hours: 2:30 PM - 9:00 PM GMT)
 
-### Bin collection showing estimated dates
-- Add your UPRN to `.env` as `BIN_UPRN=your_uprn_here`
-- The estimated schedule assumes Monday collections with alternating weeks
+### Bin collection not showing
+- Verify `BIN_UPRN` is set correctly in `config.php`
+- Ensure Python 3 and `requests` library are installed
+- Check that `BIN_COUNCIL` matches your council (SOUTH or VALE)
 
 ## Security Notes
 
-- **Never commit `.env` to Git** - it's already in `.gitignore`
+- **Never commit `config.php` to Git** - it's already in `.gitignore`
 - API keys are server-side only and not exposed to the browser
 - Use "Paper Trading" keys for Alpaca, never live trading keys
-- All API calls are cached appropriately to minimize requests
+- All API calls are cached appropriately to minimise requests
 
 ## 4x3 Display Optimization
 
