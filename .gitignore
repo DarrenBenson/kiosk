@@ -23,5 +23,8 @@ Thumbs.db
 # Local config override (for standalone deployments with hardcoded keys)
 config.local.php
 
+# Docker environment file
+.env
+
 # Cache directory
 cache/

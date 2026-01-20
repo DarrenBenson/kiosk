@@ -1,0 +1,21 @@
+services:
+  kiosk:
+    build: .
+    ports:
+      - "8080:80"
+    environment:
+      - SITE_TITLE=Kiosk Display
+      - WEATHER_API_KEY=${WEATHER_API_KEY:-}
+      - WEATHER_LAT=${WEATHER_LAT:-51.5074}
+      - WEATHER_LON=${WEATHER_LON:--0.1278}
+      - WEATHER_LOCATION=${WEATHER_LOCATION:-London, UK}
+      - ALPACA_API_KEY=${ALPACA_API_KEY:-}
+      - ALPACA_API_SECRET=${ALPACA_API_SECRET:-}
+      - STOCK_SYMBOLS=${STOCK_SYMBOLS:-AAPL,GOOGL,MSFT,AMZN,META,AMD,NVDA}
+      - BINS_ENABLED=${BINS_ENABLED:-false}
+      - BIN_UPRN=${BIN_UPRN:-}
+      - BIN_COUNCIL=${BIN_COUNCIL:-SOUTH}
+    volumes:
+      - ./cache:/var/www/html/cache
+      - ./content:/var/www/html/content
+    restart: unless-stopped

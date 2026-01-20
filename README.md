@@ -68,14 +68,26 @@ Open http://localhost:8080 in your browser.
 git clone https://github.com/DarrenBenson/kiosk.git
 cd kiosk
 
-# Run with Docker
-docker run -d \
-  -p 8080:80 \
+# Create .env file with your API keys
+cat > .env << EOF
+WEATHER_API_KEY=your_key_here
+ALPACA_API_KEY=your_key_here
+ALPACA_API_SECRET=your_secret_here
+EOF
+
+# Build and run
+docker compose up -d
+```
+
+Or build and run manually:
+
+```bash
+docker build -t kiosk .
+docker run -d -p 8080:80 \
   -e WEATHER_API_KEY=your_key_here \
   -e ALPACA_API_KEY=your_key_here \
   -e ALPACA_API_SECRET=your_secret_here \
-  -v $(pwd):/var/www/html \
-  php:8.2-apache
+  kiosk
 ```
 
 ### Option 3: Production deployment
