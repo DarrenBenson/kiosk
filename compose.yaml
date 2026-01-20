@@ -1,0 +1,73 @@
+# Kiosk Display - Docker Compose
+# Download: curl -O https://raw.githubusercontent.com/DarrenBenson/kiosk/main/compose.yaml
+# Run: docker compose up -d
+
+services:
+  kiosk:
+    image: ghcr.io/darrenbenson/kiosk:latest
+    container_name: kiosk
+    ports:
+      - "8080:80"
+    environment:
+      # ===========================================
+      # BRANDING
+      # ===========================================
+      - SITE_TITLE=Kiosk Display
+      - LOGO_LEFT=                              # Path to left logo (optional)
+      - LOGO_RIGHT=                             # Path to right logo (optional)
+      - NEWS_RSS_URL=https://feeds.bbci.co.uk/news/uk/rss.xml
+
+      # ===========================================
+      # DISPLAY SETTINGS
+      # ===========================================
+      - DISPLAY_CURRENCY=GBP                    # GBP, USD, or EUR
+      - LOCALE=en-GB                            # Date/number formatting
+
+      # ===========================================
+      # WEATHER (OpenWeatherMap)
+      # Get your free API key: https://openweathermap.org/api
+      # ===========================================
+      - WEATHER_API_KEY=                        # Required for weather widget
+      - WEATHER_LAT=51.5074                     # Latitude (default: London)
+      - WEATHER_LON=-0.1278                     # Longitude (default: London)
+      - WEATHER_LOCATION=London, UK             # Display name
+
+      # ===========================================
+      # STOCKS (Alpaca Markets)
+      # Get your API keys: https://alpaca.markets/
+      # ===========================================
+      - ALPACA_API_KEY=                         # Required for stock prices
+      - ALPACA_API_SECRET=                      # Required for stock prices
+      - STOCK_SYMBOLS=AAPL,GOOGL,MSFT,AMZN,META,AMD,NVDA
+      - STOCK_CURRENCY=GBP                      # Convert prices to this currency
+
+      # ===========================================
+      # UK STOCKS (Alpha Vantage) - Optional
+      # Get your API key: https://www.alphavantage.co/
+      # ===========================================
+      - ALPHA_VANTAGE_API_KEY=
+      - UK_STOCK_SYMBOLS=                       # e.g. INCH.LON
+
+      # ===========================================
+      # BIN COLLECTION (UK Only)
+      # South Oxfordshire / Vale of White Horse
+      # Find your UPRN: https://www.findmyaddress.co.uk/
+      # ===========================================
+      - BINS_ENABLED=false                      # Set to true to enable
+      - BIN_UPRN=                               # Your 11-12 digit UPRN
+      - BIN_COUNCIL=SOUTH                       # SOUTH or VALE
+
+      # ===========================================
+      # APPLICATION SETTINGS
+      # ===========================================
+      - TIMEZONE=Europe/London
+
+    volumes:
+      - kiosk-cache:/var/www/html/cache
+      # Uncomment to use custom slideshow images:
+      # - ./slides:/var/www/html/content/4x3
+
+    restart: unless-stopped
+
+volumes:
+  kiosk-cache:

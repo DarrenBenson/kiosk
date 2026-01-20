@@ -39,7 +39,24 @@ All features are optional and auto-disable when their API keys aren't configured
 
 ## Installation
 
-### Option 1: Quick start (standalone)
+### Option 1: Docker (recommended)
+
+```bash
+# Download the compose file
+curl -O https://raw.githubusercontent.com/DarrenBenson/kiosk/main/compose.yaml
+
+# Edit compose.yaml and add your API keys
+nano compose.yaml
+
+# Start the container
+docker compose up -d
+```
+
+Open http://localhost:8080 in your browser.
+
+The compose file includes all configuration options with descriptions. At minimum, add your `WEATHER_API_KEY` to see the weather widget.
+
+### Option 2: Standalone PHP
 
 ```bash
 # Clone the repository
@@ -59,30 +76,15 @@ mkdir -p cache && chmod 755 cache
 php -S localhost:8080
 ```
 
-Open http://localhost:8080 in your browser.
-
-### Option 2: Docker deployment
+### Option 3: Build from source
 
 ```bash
-# Clone the repository
+# Clone and build
 git clone https://github.com/DarrenBenson/kiosk.git
 cd kiosk
-
-# Create .env file with your API keys
-cat > .env << EOF
-WEATHER_API_KEY=your_key_here
-ALPACA_API_KEY=your_key_here
-ALPACA_API_SECRET=your_secret_here
-EOF
-
-# Build and run
-docker compose up -d
-```
-
-Or build and run manually:
-
-```bash
 docker build -t kiosk .
+
+# Run with environment variables
 docker run -d -p 8080:80 \
   -e WEATHER_API_KEY=your_key_here \
   -e ALPACA_API_KEY=your_key_here \
@@ -90,9 +92,9 @@ docker run -d -p 8080:80 \
   kiosk
 ```
 
-### Option 3: Production deployment
+### Option 4: Production deployment
 
-See [SETUP.md](SETUP.md) for detailed nginx/Apache configuration.
+See [SETUP.md](SETUP.md) for nginx/Apache configuration.
 
 ## Configuration
 
