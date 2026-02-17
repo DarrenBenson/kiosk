@@ -18,6 +18,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Made all configuration options generic and customisable
 - Improved input validation and sanitisation in API endpoints
 
+### Fixed
+- Removed deprecated `curl_close()` calls that break JSON responses on PHP 8.5+
+- Updated user-agent to Chrome/144 Windows to bypass council Binzone WAF blocking (matching HA waste_collection_schedule PR #5358)
+- Added cookie jar to Binzone requests so JSESSIONID persists across 302 redirects
+
 ## [1.0.0] - 2024-12-30
 
 ### Added
