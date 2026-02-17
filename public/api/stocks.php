@@ -78,7 +78,6 @@ function getPreviousClose(string $symbols): array {
     $response = curl_exec($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     $curlError = curl_errno($ch);
-    curl_close($ch);
 
     if ($curlError || $httpCode !== 200 || !is_string($response)) {
         error_log("Alpaca bars API failed: HTTP $httpCode");
@@ -134,7 +133,6 @@ function getStockQuotes(?string $symbols = null, ?string $currency = null): arra
     $response = curl_exec($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     $curlError = curl_error($ch);
-    curl_close($ch);
 
     if (!is_string($response)) {
         return ['error' => 'Failed to fetch stock data: ' . $curlError];
